@@ -97,18 +97,14 @@ func run() int {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1
 	}
-	defer func() {
-		window.Destroy()
-	}()
+	defer window.Destroy()
 
 	renderer, err = sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create renderer: %s\n", err)
-		return 2
+		return 1
 	}
-	defer func() {
-		renderer.Destroy()
-	}()
+	defer renderer.Destroy()
 
 	renderer.SetDrawColor(0, 0, 0, OPAQUE)
 	renderer.Clear()
@@ -155,10 +151,19 @@ func run() int {
 						running = false
 					case sdl.K_q:
 						running = false
+					case sdl.K_RETURN:
+						altHeldDown := ks.Mod == sdl.KMOD_LALT || ks.Mod == sdl.KMOD_RALT
+						if !altHeldDown {
+							// alt+enter is not pressed
+							break
+						}
+						// alt+enter is pressed
+						fallthrough
 					case sdl.K_f, sdl.K_F11:
 						if toggleFullscreen(window) {
-							renderer.SetDrawColor(0, 0, 0, OPAQUE)
-							renderer.Clear()
+							sdl.ShowCursor(0)
+						} else {
+							sdl.ShowCursor(1)
 						}
 					}
 				}
@@ -166,11 +171,11 @@ func run() int {
 		}
 		sdl.Delay(1000 / frameRate)
 	}
-
 	return 0
 }
 
 func main() {
+	// This is to allow the deferred functions in run() to kick in at exit
 	os.Exit(run())
 }
 ```
