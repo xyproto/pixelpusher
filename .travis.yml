@@ -1,8 +1,11 @@
 language: go
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libegl1-mesa-dev libgles2-mesa-dev
+    - wget https://www.libsdl.org/release/SDL2-2.0.8.tar.gz -O SDL2-2.0.8.tar.gz
+    - tar zxf SDL2-2.0.8.tar.gz
+
+install:
+   - (cd SDL2-2.0.8 && ./configure && make && sudo make install)
 
 go:
   - "1.x"
