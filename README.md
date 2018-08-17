@@ -1,6 +1,6 @@
 # multirender
 
-Module for concurrent software rendering.
+Package for concurrent software rendering.
 
 ## Features and limitations
 
