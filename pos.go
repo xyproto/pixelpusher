@@ -10,6 +10,11 @@ type Pos struct {
 	y int32
 }
 
+// NewPos creates a new position
+func NewPos(x, y int32) *Pos {
+	return &Pos{x, y}
+}
+
 func (p *Pos) String() string {
 	return fmt.Sprintf("(%d, %d)", p.x, p.y)
 }
