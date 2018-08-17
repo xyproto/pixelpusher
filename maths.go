@@ -74,8 +74,8 @@ func MinMax(a, b int32) (int32, int32) {
 
 // CorrespondingY takes an Y and three coordinate pairs.
 // The X of the coordinate pair that matches Y is returned.
-// May panic if misused!
-func CorrespondingY(ySelector, y1, y2, y3, x1, x2, x3 int32) int32 {
+// Will panic if there is no match!
+func correspondingY(ySelector, y1, y2, y3, x1, x2, x3 int32) int32 {
 	switch ySelector {
 	case y1:
 		return x1
@@ -90,8 +90,8 @@ func CorrespondingY(ySelector, y1, y2, y3, x1, x2, x3 int32) int32 {
 
 // CorrespondingX takes an X and three coordinate pairs.
 // The Y of the coordinate pair that matches X is returned.
-// May panic if misused!
-func CorrespondingX(xSelector, y1, y2, y3, x1, x2, x3 int32) int32 {
+// Will panic if there is no match!
+func correspondingX(xSelector, y1, y2, y3, x1, x2, x3 int32) int32 {
 	switch xSelector {
 	case x1:
 		return y1
