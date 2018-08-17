@@ -8,8 +8,8 @@ Concurrent software rendering and triangle rasterization.
 
 * Can draw software-rendered triangles concurrently, using goroutines. The work of drawing the triangles are divided on the available CPU cores.
 * Provides flat-shaded triangles.
-* Everything is drawn to a `[]uint32` pixel buffer.
-* Does not depend on SDL2 or any other graphics library.
+* Everything is drawn to a `[]uint32` pixel buffer (containing "red", "green", "blue" and "alpha").
+* Tested together with SDL2, but can be used with any graphics library that can output pixels from a pixel buffer.
 * Everything you need for creating an oldschool game or demoscene demo that will run on Linux, macOS and Windows, while using all of the cores.
 * Does not support palette cycling, yet.
 
