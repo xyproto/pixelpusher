@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// PointInTriangle tries to decide if the given x and y are within the triangle defined by p0, p1 and p2
+// pointInTriangle tries to decide if the given x and y are within the triangle defined by p0, p1 and p2
 // area is 1.0 divided on (the area of the triangle, times 2)
 func pointInTriangle(x, y int32, p0, p1, p2 *Pos, areaMod float32) bool {
 	s := areaMod * float32(p0.y*p2.x-p0.x*p2.y+(p2.y-p0.y)*x+(p0.x-p2.x)*y)
@@ -20,7 +20,7 @@ func area(p0, p1, p2 *Pos) float32 {
 }
 
 // drawPartialTriangle draws a part of a triangle
-// areaMod is 1.0 dividded on (the area of the triangle, times 2)
+// areaMod is 1.0 divided on (the area of the triangle, times 2)
 func drawPartialTriangle(wg *sync.WaitGroup, pixels []uint32, p1, p2, p3 *Pos, minX, maxX, minY, maxY int32, areaMod float32, colorValue uint32, pitch int32) {
 	for y := minY; y < maxY; y++ {
 		offset := y * pitch
