@@ -1,4 +1,4 @@
-# multirender
+# multirender [![Build Status](https://travis-ci.org/xyproto/multirender.svg?branch=master)](https://travis-ci.org/xyproto/multirender) [![GoDoc](https://godoc.org/github.com/xyproto/multirender?status.svg)](http://godoc.org/github.com/xyproto/multirender) [![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/xyproto/multirender/master/LICENSE) [![Report Card](https://img.shields.io/badge/go_report-A+-brightgreen.svg?style=flat)](http://goreportcard.com/report/xyproto/multirender)
 
 Concurrent software rendering and triangle rasterization.
 
