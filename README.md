@@ -2,11 +2,13 @@
 
 Module for concurrent software rendering.
 
-Everything is drawn to a `[]uint32` pixel buffer before rendering.
+## Features and limitations
 
-Can draw software-rendered triangles concurrently.
+* Can draw software-rendered triangles concurrently, using goroutines!
+* Everything is drawn to a `[]uint32` pixel buffer.
+* Does not depend on SDL2 or any other graphics library.
 
-## Example usage, with SDL2
+## Example, using SDL2
 
 ```go
 package main
