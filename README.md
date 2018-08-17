@@ -10,6 +10,8 @@ Concurrent software rendering and triangle rasterization.
 * Provides flat-shaded triangles.
 * Everything is drawn to a `[]uint32` pixel buffer.
 * Does not depend on SDL2 or any other graphics library.
+* Everything you need for creating an oldschool game or demoscene demo that will run on Linux, macOS and Windows, while using all of the cores.
+* Does not support palette cycling, yet.
 
 ## Example, using multirender and [SDL2](https://github.com/veandco/go-sdl2):
 
