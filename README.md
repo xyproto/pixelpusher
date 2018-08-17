@@ -8,7 +8,7 @@ Package for concurrent software rendering.
 * Everything is drawn to a `[]uint32` pixel buffer.
 * Does not depend on SDL2 or any other graphics library.
 
-## Example, using SDL2
+## Example, using multirender and [SDL2](https://github.com/veandco/go-sdl2):
 
 ```go
 package main
