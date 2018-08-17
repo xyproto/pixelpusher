@@ -120,13 +120,29 @@ func Lengths(p1, p2 *Pos) (int32, int32) {
 	return xlength, ylength
 }
 
+// Min2 returns the smallest of two numbers
+func Min2(a, b int32) int32 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// Max2 returns the largest of two numbers
+func Max2(a, b int32) int32 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
 // Interpolate interpolates between two points, with the number of steps equal to the length of the longest stretch
 func Interpolate(p1, p2 *Pos) []*Pos {
 	var points []*Pos
 	xlength, ylength := Lengths(p1, p2)
 	if xlength > ylength {
 		xstart, xstop := MinMax(p1.x, p2.x)
-		ystart, _ := MinMax(p1.y, p2.y)
+		ystart := Min2(p1.y, p2.y)
 		y := float32(ystart)
 		ystep := float32(ylength) / float32(xlength)
 		for x := xstart; x < xstop; x++ {
@@ -137,7 +153,7 @@ func Interpolate(p1, p2 *Pos) []*Pos {
 	}
 	// ylength >= xlength
 	ystart, ystop := MinMax(p1.y, p2.y)
-	xstart, _ := MinMax(p1.x, p2.x)
+	xstart := Min2(p1.x, p2.x)
 	x := float32(xstart)
 	xstep := float32(xlength) / float32(ylength)
 	for y := ystart; y < ystop; y++ {
