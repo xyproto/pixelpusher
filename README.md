@@ -1,16 +1,17 @@
 # multirender
 
-Package for concurrent software rendering.
+Concurrent software rendering and triangle rasterization.
+
+![screencap](img/screencap.gif)
 
 ## Features and limitations
 
-* Can draw software-rendered triangles concurrently, using goroutines!
+* Can draw software-rendered triangles concurrently, using goroutines. The work of drawing the triangles are divided on the available CPU cores.
+* Provides flat-shaded triangles.
 * Everything is drawn to a `[]uint32` pixel buffer.
 * Does not depend on SDL2 or any other graphics library.
 
 ## Example, using multirender and [SDL2](https://github.com/veandco/go-sdl2):
-
-![screencap](img/screencap.gif)
 
 ```go
 package main
