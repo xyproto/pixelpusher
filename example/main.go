@@ -1,14 +1,4 @@
-# multirender
-
-Module for concurrent software rendering.
-
-Uses SDL2 and draws everything to a `[]uint32` pixel buffer before rendering.
-
-Can draw software-rendered triangles concurrently!
-
-## Example usage
-
-```go
+// Example of software rendering
 package main
 
 import (
@@ -168,4 +158,3 @@ func run() int {
 func main() {
 	os.Exit(run())
 }
-```
