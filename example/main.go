@@ -36,14 +36,12 @@ func ranb() uint8 {
 // DrawAll fills the pixel buffer with pixels
 func DrawAll(cores int, pixels []uint32) {
 
-	// Draw pseudo-random lines
-	multirender.Line(pixels, rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), color.RGBA{ranb(), ranb(), ranb(), OPAQUE}, W)
-
-	// Draw pseudo-random triangles, concurrently
+	// First draw triangles, concurrently
 	multirender.Triangle(cores, pixels, rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), color.RGBA{ranb(), ranb(), ranb(), OPAQUE}, W)
 
-	// Draw red pixels, with pseudo-random transparency
-	multirender.Pixel(pixels, rand.Int31n(W), rand.Int31n(H), color.RGBA{255, 0, 0, ranb()}, W)
+	// Then draw lines and pixels, without caring about which order they appear in
+	go multirender.Line(pixels, rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), color.RGBA{ranb(), ranb(), ranb(), OPAQUE}, W)
+	go multirender.Pixel(pixels, rand.Int31n(W), rand.Int31n(H), color.RGBA{255, 0, 0, ranb()}, W)
 }
 
 // isFullscreen checks if the current window has the WINDOW_FULLSCREEN_DESKTOP flag set
