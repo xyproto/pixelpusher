@@ -138,6 +138,14 @@ func run() int {
 						running = false
 					case sdl.K_q:
 						running = false
+					case sdl.K_RETURN:
+						altHeldDown := ks.Mod == sdl.KMOD_LALT || ks.Mod == sdl.KMOD_RALT
+						if !altHeldDown {
+							// alt+enter is not pressed
+							break
+						}
+						// alt+enter is pressed
+						fallthrough
 					case sdl.K_f, sdl.K_F11:
 						if toggleFullscreen(window) {
 							renderer.SetDrawColor(0, 0, 0, OPAQUE)
