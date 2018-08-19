@@ -32,17 +32,19 @@ import (
 
 const (
 	// Size of "worldspace pixels", measured in "screenspace pixels"
-	PIXELSCALE = 4
+	pixelscale = 4
 
 	// The resolution (worldspace)
-	W = 320
-	H = 200
+	width  = 320
+	height = 200
+
+	pitch = width
 
 	// Target framerate
 	frameRate = 60
 
 	// Alpha value for opaque colors
-	OPAQUE = 255
+	opaque = 255
 )
 
 // ranb returns a random byte
@@ -54,11 +56,11 @@ func ranb() uint8 {
 func DrawAll(cores int, pixels []uint32) {
 
 	// First draw triangles, concurrently
-	multirender.Triangle(cores, pixels, rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), color.RGBA{ranb(), ranb(), ranb(), OPAQUE}, W)
+	multirender.Triangle(cores, pixels, rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), color.RGBA{ranb(), ranb(), ranb(), opaque}, pitch)
 
 	// Then draw lines and pixels, without caring about which order they appear in
-	go multirender.Line(pixels, rand.Int31n(W), rand.Int31n(H), rand.Int31n(W), rand.Int31n(H), color.RGBA{ranb(), ranb(), ranb(), OPAQUE}, W)
-	go multirender.Pixel(pixels, rand.Int31n(W), rand.Int31n(H), color.RGBA{255, 0, 0, ranb()}, W)
+	go multirender.Line(pixels, rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), color.RGBA{ranb(), ranb(), ranb(), opaque}, pitch)
+	go multirender.Pixel(pixels, rand.Int31n(width), rand.Int31n(height), color.RGBA{255, 0, 0, ranb()}, pitch)
 }
 
 // isFullscreen checks if the current window has the WINDOW_FULLSCREEN_DESKTOP flag set
@@ -92,7 +94,7 @@ func run() int {
 		err      error
 	)
 
-	window, err = sdl.CreateWindow("Pixels!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(W*PIXELSCALE), int32(H*PIXELSCALE), sdl.WINDOW_SHOWN)
+	window, err = sdl.CreateWindow("Pixels!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1
@@ -106,10 +108,10 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	renderer.SetDrawColor(0, 0, 0, OPAQUE)
+	renderer.SetDrawColor(0, 0, 0, opaque)
 	renderer.Clear()
 
-	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, W, H)
+	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
 	if err != nil {
 		panic(err)
 	}
@@ -120,7 +122,7 @@ func run() int {
 	rand.Seed(time.Now().UnixNano())
 
 	cores := runtime.NumCPU()
-	pixels := make([]uint32, W*H)
+	pixels := make([]uint32, width*height)
 
 	var event sdl.Event
 	var running = true
@@ -132,7 +134,7 @@ func run() int {
 		DrawAll(cores, pixels)
 
 		// Draw pixel buffer to screen
-		texture.UpdateRGBA(nil, pixels, W)
+		texture.UpdateRGBA(nil, pixels, width)
 		renderer.Clear()
 		renderer.Copy(texture, nil, nil)
 		renderer.Present()
