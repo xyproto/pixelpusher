@@ -20,6 +20,7 @@ const (
 	width  = 320
 	height = 200
 
+	// The width of the pixel buffer, used when calculating where to place pixels (y*pitch+x)
 	pitch = width
 
 	// Target framerate
@@ -40,12 +41,13 @@ func DrawAll(cores int, pixels []uint32) {
 	// First draw triangles, concurrently
 	multirender.Triangle(cores, pixels, rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), color.RGBA{ranb(), ranb(), ranb(), opaque}, pitch)
 
-	// Then draw lines and pixels, without caring about which order they appear in
+	// Then draw lines and pixels, without caring about which order they appear in, or if they will complete before the next frame is drawn
 	go multirender.Line(pixels, rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), color.RGBA{ranb(), ranb(), ranb(), opaque}, pitch)
 	go multirender.Pixel(pixels, rand.Int31n(width), rand.Int31n(height), color.RGBA{255, 0, 0, ranb()}, pitch)
 }
 
-// isFullscreen checks if the current window has the WINDOW_FULLSCREEN_DESKTOP flag set
+// isFullscreen checks if the current window has the WINDOW_FULLSCREEN
+// or WINDOW_FULLSCREEN_DESKTOP flag set.
 func isFullscreen(window *sdl.Window) bool {
 	currentFlags := window.GetFlags()
 	fullscreen1 := (currentFlags & sdl.WINDOW_FULLSCREEN_DESKTOP) != 0
@@ -53,8 +55,8 @@ func isFullscreen(window *sdl.Window) bool {
 	return fullscreen1 || fullscreen2
 }
 
-// toggleFullscreen switches to fullscreen and back
-// returns true if the mode has been switched to fullscreen
+// toggleFullscreen switches to fullscreen and back.
+// Returns true if the mode has been switched to fullscreen
 func toggleFullscreen(window *sdl.Window) bool {
 	if !isFullscreen(window) {
 		// Switch to fullscreen mode
