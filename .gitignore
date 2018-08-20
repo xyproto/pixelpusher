@@ -14,3 +14,6 @@
 # Ignore executables
 examples/triangles/triangles
 examples/blending/blending
+
+# Ignore generated images
+examples/*/*.png
