@@ -26,12 +26,13 @@ func FastClear(pixels []uint32, colorValue uint32) {
 	}
 }
 
+// TODO: TEST THIS FUNCTION
 // ColorValueToRGBA converts from an uint32 to four bytes
 func ColorValueToRGBA(cv uint32) (uint8, uint8, uint8, uint8) {
 	bs := make([]uint8, 4)
 	binary.LittleEndian.PutUint32(bs, cv)
 	// r, g, b, a
-	return bs[0], bs[1], bs[2], bs[3]
+	return bs[2], bs[1], bs[0], bs[3]
 }
 
 // RGBAToColorValue converts from four bytes to an uint32

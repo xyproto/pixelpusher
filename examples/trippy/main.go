@@ -46,6 +46,44 @@ func rh() int32 {
 	return rand.Int31n(height)
 }
 
+func Trippy(pixels []uint32, width, height uint32, pitch int32) {
+	for y := int32(1); y < int32(height-1); y++ {
+		for x := int32(1); x < int32(width-1); x++ {
+			left := pixels[y*pitch+x-1]
+			right := pixels[y*pitch+x+1]
+			this := pixels[y*pitch+x]
+			above := pixels[(y+1)*pitch+x]
+			// Dividing the raw uint32 color value!
+			average := (left + right + this + above) / 8
+			pixels[y*pitch+x] = average
+		}
+	}
+}
+
+// TODO: Find out why this is trippy and not the flame effect :D
+func Flame(pixels []uint32, width, height uint32, pitch int32) {
+	for y := int32(1); y < int32(height-1); y++ {
+		for x := int32(1); x < int32(width-1); x++ {
+			left := pixels[y*pitch+x-1]
+			right := pixels[y*pitch+x+1]
+			this := pixels[y*pitch+x]
+			above := pixels[(y+1)*pitch+x]
+
+			lr, lg, lb, la := multirender.ColorValueToRGBA(left)
+			rr, rg, rb, ra := multirender.ColorValueToRGBA(right)
+			tr, tg, tb, ta := multirender.ColorValueToRGBA(this)
+			ar, ag, ab, aa := multirender.ColorValueToRGBA(above)
+
+			averageR := (lr + rr + tr + ar) / 4
+			averageG := (lg + rg + tg + ag) / 4
+			averageB := (lb + rb + tb + ab) / 4
+			averageA := (la + ra + ta + aa) / 4
+
+			pixels[y*pitch+x] = multirender.RGBAToColorValue(averageR, averageG, averageB, averageA)
+		}
+	}
+}
+
 // TriangleDance draws a dancing triangle, as time goes from 0.0 to 1.0.
 // The returned value signals to wich degree the graphics should be transitioned out.
 func TriangleDance(time float32, pixels []uint32, width, height uint32, pitch int32, cores int) (transition float32) {
@@ -130,6 +168,7 @@ func run() int {
 				// Draw to the pixel buffer
 				TriangleDance(partTime, pixels, width, height, pitch, cores)
 			}
+			Flame(pixels, width, height, pitch)
 
 			// Keep track of the time given to TriangleDance
 			partTime += 0.002
