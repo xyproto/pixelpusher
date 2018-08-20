@@ -190,3 +190,9 @@ func main() {
 	os.Exit(run())
 }
 ```
+
+# Screenshots
+
+Screenshot from the `blending` example:
+
+![blending](img/blending.png)
