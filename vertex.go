@@ -1,7 +1,6 @@
 package multirender
 
 import (
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"image/color"
@@ -21,7 +20,7 @@ type Vertex struct {
 }
 
 func NewVertex(x, y, z float32, r, g, b, a uint8) *Vertex {
-	return &Vertex{&Vec3{x, y, z}, binary.BigEndian.Uint32([]uint8{a, r, g, b})}
+	return &Vertex{&Vec3{x, y, z}, RGBAToColorValue(r, g, b, a)}
 }
 
 func (v *Vertex) X() float32 {
@@ -62,25 +61,20 @@ func (v *Vertex) GetVec3() *Vec3 {
 }
 
 func (v *Vertex) SetRGBA(r, g, b, a uint8) {
-	v.colorValue = binary.BigEndian.Uint32([]uint8{a, r, g, b})
+	v.colorValue = RGBAToColorValue(r, g, b, a)
 }
 
 func (v *Vertex) SetColor(c color.RGBA) {
-	v.colorValue = binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
+	v.colorValue = RGBAToColorValue(c.R, c.G, c.B, c.A)
 }
 
 func (v *Vertex) GetRGBA() (uint8, uint8, uint8, uint8) {
-	bs := make([]uint8, 4)
-	binary.LittleEndian.PutUint32(bs, v.colorValue)
-	// b g r a
-	return bs[2], bs[1], bs[0], bs[3]
+	return ColorValueToRGBA(v.colorValue)
 }
 
 func (v *Vertex) GetColor() color.RGBA {
-	bs := make([]uint8, 4)
-	binary.LittleEndian.PutUint32(bs, v.colorValue)
-	// b g r a
-	return color.RGBA{bs[2], bs[1], bs[0], bs[3]}
+	r, g, b, a := ColorValueToRGBA(v.colorValue)
+	return color.RGBA{r, g, b, a}
 }
 
 func (v *Vertex) R() uint8 {
