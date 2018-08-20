@@ -9,12 +9,6 @@ import (
 	"os"
 )
 
-// exists checks if a file already exists
-func exists(filename string) bool {
-	_, err := os.Stat(filename)
-	return err == nil
-}
-
 // PixelsToImage converts a pixel buffer to an image.RGBA image
 func PixelsToImage(pixels []uint32, pitch uint32) *image.RGBA {
 	width := pitch
@@ -28,14 +22,16 @@ func PixelsToImage(pixels []uint32, pitch uint32) *image.RGBA {
 			binary.LittleEndian.PutUint32(bs, pixels[y*pitch+x])
 			c := color.RGBA{bs[2], bs[1], bs[0], bs[3]}
 			img.Set(int(x), int(y), c)
-			//img.Pix[y*pitch+x*4] = bs[2]
-			//img.Pix[y*pitch+x*4+1] = bs[1]
-			//img.Pix[y*pitch+x*4+2] = bs[0]
-			//img.Pix[y*pitch+x*4+3] = bs[3]
 		}
 	}
 
 	return img
+}
+
+// exists checks if a file already exists
+func exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
 }
 
 // SaveImageToPNG saves an image.RGBA image to a PNG file.
