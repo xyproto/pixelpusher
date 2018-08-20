@@ -62,56 +62,57 @@ func Trippy(pixels []uint32, width, height uint32, pitch int32) {
 }
 
 // TODO: Find out why this is trippy and not the flame effect :D
-func Flame(time float32, pixels []uint32, width, height uint32, pitch int32) {
+func Flame(time float32, pixels []uint32, width, height uint32, pitch int32, enr int) {
 
 	// Make the effect increase and decrease in intensity instead of increasing and then dropping down to 0 again
 	stime := float32(math.Sin(float64(time) * math.Pi))
+	var left, right, this, above uint32
+	two1 := int32(2.0 - stime*4.0)
+	two2 := int32(2.0 - time*4.0)
+	one1 := int32(1.0 - stime*2.0)
+	one2 := int32(1.0 - time*2.0)
 
 	for y := int32(2); y < int32(height-2); y++ {
 		for x := int32(2); x < int32(width-2); x++ {
 
-			// "snow patterns"
-			//left := pixels[y*pitch+x-1]
-			//right := pixels[y*pitch+x+1]
-			//this := pixels[y*pitch+x]
-			//above := pixels[(y+1)*pitch+x]
-
-			// "highway"
-			//left := pixels[(y-1)*pitch+x-1]
-			//right := pixels[(y-1)*pitch+x+1]
-			//this := pixels[y*pitch+x]
-			//above := pixels[(y-1)*pitch+x]
-
-			// "dither highway"
-			//left := pixels[(y-1)*pitch+x-1]
-			//right := pixels[(y-1)*pitch+x+1]
-			//this := pixels[(y-1)*pitch+(x-1)]
-			//above := pixels[(y+1)*pitch+(x+1)]
-
-			// "speeding"
-			//two1 := int32(2.0 - stime * 4.0)
-			//two2 := int32(2.0 - time * 4.0)
-			//left := pixels[y*pitch+(x-two2)]
-			//right := pixels[y*pitch+(x+two1)]
-			//this := pixels[y*pitch+int32(float32(x)*stime)]
-			//above := pixels[(y-two2)*pitch+int32(float32(x)*stime)]
-
-			// "castle"
-			//one1 := int32(1.0 - stime * 2.0)
-			//one2 := int32(1.0 - time * 2.0)
-			//two1 := int32(2.0 - stime * 4.0)
-			//left := pixels[y*pitch+(x-one1)]
-			//right := pixels[y*pitch+(x+one1)]
-			//this := pixels[y*pitch+x*two1]
-			//above := pixels[(y-one2)*pitch+x*two1]
-
-			// "butterfly"
-			two1 := int32(2.0 - stime*4.0)
-			two2 := int32(2.0 - time*4.0)
-			left := pixels[y*pitch+(x-two1)]
-			right := pixels[y*pitch+(x+two1)]
-			this := pixels[y*pitch+x*two2]
-			above := pixels[(y-two1)*pitch+x*two2]
+			switch enr {
+			case 0:
+				// "snow patterns"
+				left = pixels[y*pitch+x-1]
+				right = pixels[y*pitch+x+1]
+				this = pixels[y*pitch+x]
+				above = pixels[(y+1)*pitch+x]
+			case 1:
+				// "highway"
+				left = pixels[(y-1)*pitch+x-1]
+				right = pixels[(y-1)*pitch+x+1]
+				this = pixels[y*pitch+x]
+				above = pixels[(y-1)*pitch+x]
+			case 2:
+				// "dither highway"
+				left = pixels[(y-1)*pitch+x-1]
+				right = pixels[(y-1)*pitch+x+1]
+				this = pixels[(y-1)*pitch+(x-1)]
+				above = pixels[(y+1)*pitch+(x+1)]
+			case 3:
+				// "butterfly"
+				left = pixels[y*pitch+(x-two1)]
+				right = pixels[y*pitch+(x+two1)]
+				this = pixels[y*pitch+x*two2]
+				above = pixels[(y-two1)*pitch+x*two2]
+			case 4:
+				// ?
+				left = pixels[y*pitch+(x-two2)]
+				right = pixels[y*pitch+(x+two1)]
+				this = pixels[y*pitch+int32(float32(x)*stime)]
+				above = pixels[(y-two2)*pitch+int32(float32(x)*stime)]
+			case 5:
+				// "castle"
+				left = pixels[y*pitch+(x-one1)]
+				right = pixels[y*pitch+(x+one1)]
+				this = pixels[y*pitch+x*two1]
+				above = pixels[(y-one2)*pitch+x*two1]
+			}
 
 			lr, lg, lb, _ := multirender.ColorValueToRGBA(left)
 			rr, rg, rb, _ := multirender.ColorValueToRGBA(right)
@@ -167,14 +168,14 @@ func clamp(v float32, max uint8) uint8 {
 	return uint8(u)
 }
 
-// Every pixel that is not really light, decrease the intensity
+// Every pixel that is light, decrease the intensity
 func Darken(pixels []uint32) {
 	for i := range pixels {
 		r, g, b, _ := multirender.ColorValueToRGBA(pixels[i])
-		if r > 240 && g > 240 && b > 240 {
+		if r < 20 && g < 20 && b < 20 {
 			continue
 		}
-		pixels[i] = multirender.RGBAToColorValue(clamp(float32(r)*1.1, 255), clamp(float32(g)*1.1, 255), clamp(float32(b)*1.1, 255), 255)
+		pixels[i] = multirender.RGBAToColorValue(clamp(float32(r)*0.99, 255), clamp(float32(g)*0.99, 255), clamp(float32(b)*0.99, 255), 255)
 	}
 }
 
@@ -280,6 +281,9 @@ func run() int {
 
 	var loopCounter int64 = 0
 
+	// effect number
+	enr := 3
+
 	// Innerloop
 	for !quit {
 
@@ -290,14 +294,18 @@ func run() int {
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, -1, 0)
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 0, 1)
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 0, -1)
-				Flame(flameTime, pixels, width, height, pitch)
+				Flame(flameTime, pixels, width, height, pitch, enr)
 			}
-			Flame(flameTime, pixels, width, height, pitch)
+			Flame(flameTime, pixels, width, height, pitch, enr)
 
 			// Keep track of the time given to TriangleDance
-			cycleTime += 0.0002
+			cycleTime += 0.002
 			if cycleTime >= 1.0 {
 				cycleTime = 0.0
+				enr++
+				if enr > 3 {
+					enr = 0
+				}
 			}
 
 			// Keep track of the time given to Flame
@@ -326,9 +334,6 @@ func run() int {
 			// Clear the render buffer between each frame
 			//renderer.Clear()
 
-		} else {
-			fmt.Println("FLAME TIME", flameTime)
-			fmt.Println("CYCLE TIME", cycleTime)
 		}
 
 		// Check for events
