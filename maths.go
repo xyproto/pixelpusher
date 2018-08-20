@@ -162,3 +162,14 @@ func Interpolate(p1, p2 *Pos) []*Pos {
 	}
 	return points
 }
+
+// Clamp makes sure x is between the two given numbers by simply cutting it off
+func Clamp(x, a, b uint32) uint32 {
+	if x < a {
+		return a
+	}
+	if x >= b {
+		return b - 1
+	}
+	return x
+}
