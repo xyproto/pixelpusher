@@ -17,5 +17,4 @@ examples/*/*.png
 # Ignore screenshots
 examples/triangles/triangles
 examples/blending/blending
-examples/parts/parts
-examples/trippy/trippy
+examples/butterfly/butterfly
