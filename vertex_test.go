@@ -37,7 +37,7 @@ func TestColor(t *testing.T) {
 	}
 }
 
-func ExampleColor() {
+func ExampleNewVertex() {
 	v := NewVertex(0, 1, 2, 3, 4, 5, 6)
 	fmt.Println(v)
 	// Output:
