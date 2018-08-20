@@ -52,7 +52,10 @@ func Triangle(cores int, pixels []uint32, x1, y1, x2, y2, x3, y3 int32, c color.
 	colorValue := binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
 
 	ylength := (maxY - minY)
+
 	if ylength == 0 {
+		// This is not a triangle, but a horizontal line, since ylength == 0
+		HorizontalLineFast(pixels, minY, minX, maxX, c, pitch)
 		return
 	}
 	// cores-1 because of the final part after the for loop
