@@ -48,29 +48,41 @@ const (
 	opaque = 255
 )
 
-// ranb returns a random byte
-func ranb() uint8 {
+// rb returns a random byte
+func rb() uint8 {
 	return uint8(rand.Intn(255))
 }
 
-// DrawAll fills the pixel buffer with pixels
-func DrawAll(cores int, pixels []uint32) {
+// rw returns a random int32 in the range [0,width)
+func rw() int32 {
+	return rand.Int31n(width)
+}
 
-	// First draw triangles, concurrently
-	multirender.Triangle(cores, pixels, rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), color.RGBA{ranb(), ranb(), ranb(), opaque}, pitch)
+// rh returns a random int32 in the range [0,height)
+func rh() int32 {
+	return rand.Int31n(height)
+}
 
-	// Then draw lines and pixels, without caring about which order they appear in, or if they will complete before the next frame is drawn
-	go multirender.Line(pixels, rand.Int31n(width), rand.Int31n(height), rand.Int31n(width), rand.Int31n(height), color.RGBA{ranb(), ranb(), ranb(), opaque}, pitch)
-	go multirender.Pixel(pixels, rand.Int31n(width), rand.Int31n(height), color.RGBA{255, 0, 0, ranb()}, pitch)
+// DrawAll fills the pixel buffer with pixels.
+// "cores" is how many CPU cores should be targeted when drawing triangles,
+// by launching the same number of goroutines.
+func DrawAll(pixels []uint32, cores int) {
+
+	// Draw a triangle, concurrently
+	multirender.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+
+	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
+	go multirender.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{0xff, 0xff, 0, opaque}, pitch)
+	go multirender.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0xff, 0xff, opaque}, pitch)
 }
 
 // isFullscreen checks if the current window has the WINDOW_FULLSCREEN
 // or WINDOW_FULLSCREEN_DESKTOP flag set.
 func isFullscreen(window *sdl.Window) bool {
-	currentFlags := window.GetFlags()
-	fullscreen1 := (currentFlags & sdl.WINDOW_FULLSCREEN_DESKTOP) != 0
-	fullscreen2 := (currentFlags & sdl.WINDOW_FULLSCREEN) != 0
-	return fullscreen1 || fullscreen2
+	flags := window.GetFlags()
+	window_fullscreen := (flags & sdl.WINDOW_FULLSCREEN) != 0
+	window_fullscreen_desktop := (flags & sdl.WINDOW_FULLSCREEN_DESKTOP) != 0
+	return window_fullscreen || window_fullscreen_desktop
 }
 
 // toggleFullscreen switches to fullscreen and back.
@@ -110,7 +122,8 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	renderer.SetDrawColor(0, 0, 0, opaque)
+	// Fill the render buffer with color #FF00CC
+	renderer.SetDrawColor(0xff, 0, 0xcc, opaque)
 	renderer.Clear()
 
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
@@ -118,43 +131,49 @@ func run() int {
 		panic(err)
 	}
 
-	texture.SetBlendMode(sdl.BLENDMODE_BLEND)
-	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+	texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
 
 	rand.Seed(time.Now().UnixNano())
 
-	cores := runtime.NumCPU()
-	pixels := make([]uint32, width*height)
-
-	var event sdl.Event
-	var running = true
+	var (
+		pixels = make([]uint32, width*height)
+		cores  = runtime.NumCPU()
+		event  sdl.Event
+		quit   bool
+		pause  bool
+	)
 
 	// Innerloop
-	for running {
+	for !quit {
 
-		// Draw to pixel buffer
-		DrawAll(cores, pixels)
+		if !pause {
+			// Draw to pixel buffer
+			DrawAll(pixels, cores)
 
-		// Draw pixel buffer to screen
-		texture.UpdateRGBA(nil, pixels, width)
-		renderer.Clear()
-		renderer.Copy(texture, nil, nil)
-		renderer.Present()
+			// Draw pixel buffer to screen
+			texture.UpdateRGBA(nil, pixels, width)
+
+			// Clear the render buffer between each frame
+			renderer.Clear()
+
+			renderer.Copy(texture, nil, nil)
+			renderer.Present()
+		}
 
 		// Check for events
 		for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
-				running = false
+				quit = true
 			case *sdl.KeyboardEvent:
 				ke := event.(*sdl.KeyboardEvent)
 				if ke.Type == sdl.KEYDOWN {
 					ks := ke.Keysym
 					switch ks.Sym {
 					case sdl.K_ESCAPE:
-						running = false
+						quit = true
 					case sdl.K_q:
-						running = false
+						quit = true
 					case sdl.K_RETURN:
 						altHeldDown := ks.Mod == sdl.KMOD_LALT || ks.Mod == sdl.KMOD_RALT
 						if !altHeldDown {
@@ -169,6 +188,8 @@ func run() int {
 						} else {
 							sdl.ShowCursor(1)
 						}
+					case sdl.K_SPACE, sdl.K_p:
+						pause = !pause
 					}
 				}
 			}

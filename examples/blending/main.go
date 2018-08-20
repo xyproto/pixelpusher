@@ -50,12 +50,14 @@ func rh() int32 {
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int) {
 
+	var opaqueness uint8 = 1 // Almost completely transparent
+
 	// Draw a triangle, concurrently
-	multirender.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	multirender.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
 
 	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
-	go multirender.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{0xff, 0xff, 0, opaque}, pitch)
-	go multirender.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0xff, 0xff, opaque}, pitch)
+	go multirender.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
+	go multirender.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0, 0, opaqueness}, pitch)
 }
 
 // isFullscreen checks if the current window has the WINDOW_FULLSCREEN
@@ -73,11 +75,11 @@ func toggleFullscreen(window *sdl.Window) bool {
 	if !isFullscreen(window) {
 		// Switch to fullscreen mode
 		window.SetFullscreen(sdl.WINDOW_FULLSCREEN_DESKTOP)
-		return true
 	}
 	// Switch to windowed mode
 	window.SetFullscreen(sdl.WINDOW_SHOWN)
-	return false
+	// Check that the switch has been made
+	return isFullscreen(window)
 }
 
 func run() int {
@@ -104,8 +106,8 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	// Fill the render buffer with color #FF00CC
-	renderer.SetDrawColor(0xff, 0, 0xcc, opaque)
+	// Fill the render buffer with black color
+	renderer.SetDrawColor(0, 0, 0, opaque)
 	renderer.Clear()
 
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
@@ -113,7 +115,7 @@ func run() int {
 		panic(err)
 	}
 
-	texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
+	texture.SetBlendMode(sdl.BLENDMODE_ADD)
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -136,7 +138,7 @@ func run() int {
 			texture.UpdateRGBA(nil, pixels, width)
 
 			// Clear the render buffer between each frame
-			renderer.Clear()
+			//renderer.Clear()
 
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
