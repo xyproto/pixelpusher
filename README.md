@@ -28,6 +28,7 @@ import (
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/multirender"
+	"github.com/xyproto/sdl2utils"
 )
 
 const (
@@ -74,28 +75,6 @@ func DrawAll(pixels []uint32, cores int) {
 	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
 	go multirender.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{0xff, 0xff, 0, opaque}, pitch)
 	go multirender.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0xff, 0xff, opaque}, pitch)
-}
-
-// isFullscreen checks if the current window has the WINDOW_FULLSCREEN
-// or WINDOW_FULLSCREEN_DESKTOP flag set.
-func isFullscreen(window *sdl.Window) bool {
-	flags := window.GetFlags()
-	window_fullscreen := (flags & sdl.WINDOW_FULLSCREEN) != 0
-	window_fullscreen_desktop := (flags & sdl.WINDOW_FULLSCREEN_DESKTOP) != 0
-	return window_fullscreen || window_fullscreen_desktop
-}
-
-// toggleFullscreen switches to fullscreen and back.
-// Returns true if the mode has been switched to fullscreen
-func toggleFullscreen(window *sdl.Window) bool {
-	if !isFullscreen(window) {
-		// Switch to fullscreen mode
-		window.SetFullscreen(sdl.WINDOW_FULLSCREEN_DESKTOP)
-		return true
-	}
-	// Switch to windowed mode
-	window.SetFullscreen(sdl.WINDOW_SHOWN)
-	return false
 }
 
 func run() int {
@@ -183,13 +162,20 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						if toggleFullscreen(window) {
-							sdl.ShowCursor(0)
-						} else {
-							sdl.ShowCursor(1)
-						}
+						sdl2utils.ToggleFullscreen(window)
 					case sdl.K_SPACE, sdl.K_p:
 						pause = !pause
+					case sdl.K_s:
+						ctrlHeldDown := ks.Mod == sdl.KMOD_LCTRL || ks.Mod == sdl.KMOD_RCTRL
+						if !ctrlHeldDown {
+							// ctrl+s is not pressed
+							break
+						}
+						// ctrl+s is pressed
+						fallthrough
+					case sdl.K_F12:
+						// screenshot
+						sdl2utils.Screenshot(renderer, "screenshot.png", true)
 					}
 				}
 			}

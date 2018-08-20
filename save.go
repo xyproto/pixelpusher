@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"image"
+	"image/color"
 	"image/png"
 	"os"
 )
@@ -25,16 +26,20 @@ func PixelsToImage(pixels []uint32, pitch uint32) *image.RGBA {
 	for y := uint32(0); y < height; y++ {
 		for x := uint32(0); x < width; x++ {
 			binary.LittleEndian.PutUint32(bs, pixels[y*pitch+x])
-			img.Pix[y*pitch+x*4] = bs[2]
-			img.Pix[y*pitch+x*4+1] = bs[1]
-			img.Pix[y*pitch+x*4+2] = bs[0]
-			img.Pix[y*pitch+x*4+3] = bs[3]
+			c := color.RGBA{bs[2], bs[1], bs[0], bs[3]}
+			img.Set(int(x), int(y), c)
+			//img.Pix[y*pitch+x*4] = bs[2]
+			//img.Pix[y*pitch+x*4+1] = bs[1]
+			//img.Pix[y*pitch+x*4+2] = bs[0]
+			//img.Pix[y*pitch+x*4+3] = bs[3]
 		}
 	}
 
 	return img
 }
 
+// SaveImageToPNG saves an image.RGBA image to a PNG file.
+// Set overwrite to true to allow overwriting files.
 func SaveImageToPNG(img *image.RGBA, filename string, overwrite bool) error {
 	if !overwrite && exists(filename) {
 		return errors.New(filename + " already exists")

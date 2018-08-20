@@ -10,6 +10,7 @@ import (
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/multirender"
+	"github.com/xyproto/sdl2utils"
 )
 
 const (
@@ -60,28 +61,6 @@ func DrawAll(pixels []uint32, cores int) {
 	go multirender.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0, 0, opaqueness}, pitch)
 }
 
-// isFullscreen checks if the current window has the WINDOW_FULLSCREEN
-// or WINDOW_FULLSCREEN_DESKTOP flag set.
-func isFullscreen(window *sdl.Window) bool {
-	flags := window.GetFlags()
-	window_fullscreen := (flags & sdl.WINDOW_FULLSCREEN) != 0
-	window_fullscreen_desktop := (flags & sdl.WINDOW_FULLSCREEN_DESKTOP) != 0
-	return window_fullscreen || window_fullscreen_desktop
-}
-
-// toggleFullscreen switches to fullscreen and back.
-// Returns true if the mode has been switched to fullscreen
-func toggleFullscreen(window *sdl.Window) bool {
-	if !isFullscreen(window) {
-		// Switch to fullscreen mode
-		window.SetFullscreen(sdl.WINDOW_FULLSCREEN_DESKTOP)
-	}
-	// Switch to windowed mode
-	window.SetFullscreen(sdl.WINDOW_SHOWN)
-	// Check that the switch has been made
-	return isFullscreen(window)
-}
-
 func run() int {
 
 	sdl.Init(sdl.INIT_VIDEO)
@@ -106,7 +85,7 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	// Fill the render buffer with black color
+	// Fill the render buffer with black
 	renderer.SetDrawColor(0, 0, 0, opaque)
 	renderer.Clear()
 
@@ -167,13 +146,21 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						if toggleFullscreen(window) {
-							sdl.ShowCursor(0)
-						} else {
-							sdl.ShowCursor(1)
-						}
-					case sdl.K_SPACE, sdl.K_p:
+						sdl2utils.ToggleFullscreen(window)
+					case sdl.K_p, sdl.K_SPACE:
+						// pause toggle
 						pause = !pause
+					case sdl.K_s:
+						ctrlHeldDown := ks.Mod == sdl.KMOD_LCTRL || ks.Mod == sdl.KMOD_RCTRL
+						if !ctrlHeldDown {
+							// ctrl+s is not pressed
+							break
+						}
+						// ctrl+s is pressed
+						fallthrough
+					case sdl.K_F12:
+						// screenshot
+						sdl2utils.Screenshot(renderer, "screenshot.png", true)
 					}
 				}
 			}
