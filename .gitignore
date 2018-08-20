@@ -11,9 +11,10 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Ignore executables
-examples/triangles/triangles
-examples/blending/blending
-
 # Ignore generated images
 examples/*/*.png
+
+# Ignore screenshots
+examples/triangles/triangles
+examples/blending/blending
+examples/parts/parts
