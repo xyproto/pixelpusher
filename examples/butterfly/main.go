@@ -324,16 +324,15 @@ func run() int {
 				flameTimeAdd = -flameTimeAdd
 			}
 
-			if !effect {
-				Invert(pixels)
-			}
-
-			copy(pixelCopy, pixels)
-
 			if effect {
+				copy(pixelCopy, pixels)
+				// Invert the pixels back after adding all the things above
 				Invert(pixels)
 				// Stretch the contrast on a copy of the pixels
 				multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
+			} else {
+				Invert(pixels)
+				copy(pixelCopy, pixels)
 			}
 
 			// Draw the center red triangle, in flameTime
@@ -362,8 +361,6 @@ func run() int {
 						altHeldDown := ks.Mod == sdl.KMOD_LALT || ks.Mod == sdl.KMOD_RALT
 						if !altHeldDown {
 							// alt+enter is not pressed
-							// effect toggle
-							effect = !effect
 							break
 						}
 						// alt+enter is pressed
