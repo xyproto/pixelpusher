@@ -181,9 +181,9 @@ func Darken(pixels []uint32) {
 
 // TriangleDance draws a dancing triangle, as time goes from 0.0 to 1.0.
 // The returned value signals to wich degree the graphics should be transitioned out.
-func TriangleDance(time float32, pixels []uint32, width, height uint32, pitch int32, cores int, xdirection, ydirection int) (transition float32) {
+func TriangleDance(time float32, pixels []uint32, width, height int32, pitch int32, cores int, xdirection, ydirection int) (transition float32) {
 
-	size := uint32(70)
+	size := int32(70)
 
 	//var bgColorValue uint32 = 0x4e7f9eff
 
@@ -194,19 +194,19 @@ func TriangleDance(time float32, pixels []uint32, width, height uint32, pitch in
 	// Find a suitable placement and color
 	x := int32(0)
 	if xdirection > 0 {
-		x = int32(multirender.Clamp(uint32(float32(width)*time), size, width-size))
+		x = multirender.Clamp(int32(float32(width)*time), size, width-size)
 	} else if xdirection == 0 {
 		x = int32(width / 2)
 	} else {
-		x = int32(multirender.Clamp(uint32(float32(width)*(1.0-time)), size, width-size))
+		x = multirender.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
 	}
 	y := int32(0)
 	if ydirection > 0 {
-		y = int32(multirender.Clamp(uint32(float32(height)*time), size, height-size))
+		y = multirender.Clamp(int32(float32(height)*time), size, height-size)
 	} else if ydirection == 0 {
 		y = int32(height / 2)
 	} else {
-		y = int32(multirender.Clamp(uint32(float32(height)*(1.0-time)), size, height-size))
+		y = multirender.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
 	}
 
 	// Make the center triangle red
@@ -267,11 +267,13 @@ func run() int {
 	rand.Seed(time.Now().UnixNano())
 
 	var (
-		pixels = make([]uint32, width*height)
-		cores  = runtime.NumCPU()
-		event  sdl.Event
-		quit   bool
-		pause  bool
+		pixels    = make([]uint32, width*height)
+		pixelCopy = make([]uint32, width*height)
+		cores     = runtime.NumCPU()
+		event     sdl.Event
+		quit      bool
+		pause     bool
+		effect    bool
 	)
 
 	cycleTime := float32(0.0)
@@ -288,6 +290,10 @@ func run() int {
 	for !quit {
 
 		if !pause {
+
+			// Invert pixels before drawing
+			Invert(pixels)
+
 			if loopCounter%4 == 0 {
 				// Draw to the pixel buffer
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 1, 0)
@@ -318,21 +324,22 @@ func run() int {
 				flameTimeAdd = -flameTimeAdd
 			}
 
-			//Darken(pixels)
-
-			// Draw pixel buffer to screen, but inverted
+			// Invert pixels after doing the effects
 			Invert(pixels)
+
+			// Stretch the contrast on a copy of the pixels
+			copy(pixelCopy, pixels)
+
+			if effect {
+				fmt.Print("E")
+				//multirender.StretchContrast(cores, pixelCopy, pitch, 0x0, 0xff)
+			}
 
 			// Draw the center red triangle, in flameTime
 			//TriangleDance(flameTime, pixels, width, height, pitch, cores, 0, 0)
-			texture.UpdateRGBA(nil, pixels, width)
-			Invert(pixels)
-
+			texture.UpdateRGBA(nil, pixelCopy, pitch)
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
-
-			// Clear the render buffer between each frame
-			//renderer.Clear()
 
 		}
 
@@ -371,6 +378,15 @@ func run() int {
 						}
 						// ctrl+s is pressed
 						fallthrough
+					case sdl.K_e:
+						ctrlHeldDown := ks.Mod == sdl.KMOD_LCTRL || ks.Mod == sdl.KMOD_RCTRL
+						if !ctrlHeldDown {
+							// ctrl+e is not pressed
+							break
+						}
+						// ctrl+e is pressed
+						// toggle the effect flag
+						effect = !effect
 					case sdl.K_F12:
 						// screenshot
 						sdl2utils.Screenshot(renderer, "screenshot.png", true)

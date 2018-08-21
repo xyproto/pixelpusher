@@ -38,3 +38,47 @@ func ColorValueToRGBA(cv uint32) (uint8, uint8, uint8, uint8) {
 	// r, g, b, a
 	return bs[2], bs[1], bs[0], bs[3]
 }
+
+// Extract the red component from a ARGB uint32 color value
+func Red(cv uint32) uint8 {
+	// TODO: This can be optimized
+	bs := make([]uint8, 4)
+	binary.LittleEndian.PutUint32(bs, cv)
+	return bs[2]
+}
+
+// Extract the green component from a ARGB uint32 color value
+func Green(cv uint32) uint8 {
+	// TODO: This can be optimized
+	bs := make([]uint8, 4)
+	binary.LittleEndian.PutUint32(bs, cv)
+	return bs[1]
+}
+
+// Extract the blue component from a ARGB uint32 color value
+func Blue(cv uint32) uint8 {
+	// TODO: This can be optimized
+	bs := make([]uint8, 4)
+	binary.LittleEndian.PutUint32(bs, cv)
+	return bs[0]
+}
+
+// Extract the alpha component from a ARGB uint32 color value
+func Alpha(cv uint32) uint8 {
+	// TODO: This can be optimized
+	bs := make([]uint8, 4)
+	binary.LittleEndian.PutUint32(bs, cv)
+	return bs[3]
+}
+
+// TODO: Also create a Value function that disregards the alpha value
+
+// Extract the color value / intensity from a ARGB uint32 color value
+func Value(cv uint32) uint8 {
+	// TODO: This can be optimized
+	bs := make([]uint8, 4)
+	binary.LittleEndian.PutUint32(bs, cv)
+	grayscaleColor := float32(bs[2]+bs[1]+bs[0]) / float32(3)
+	alpha := float32(bs[3]) / float32(255)
+	return uint8(grayscaleColor * alpha)
+}

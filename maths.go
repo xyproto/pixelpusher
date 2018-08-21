@@ -1,5 +1,12 @@
 package multirender
 
+// Functions for sorting, clamping, finding minimum and maximum etc.
+// The default type for these functions is int32.
+// Functions that deals with bytes instead are postfixed with "Byte".
+// Functions that deals with ints should go elsewhere.
+// Functions that deals with floats should go elsewhere.
+// If floats are used internally, float32 is preferred.
+
 // Sort2 sorts two numbers
 func Sort2(a, b int32) (int32, int32) {
 	if a < b {
@@ -20,6 +27,26 @@ func Sort3(a, b, c int32) (int32, int32, int32) {
 	}
 	x, y := Sort2(a, b)
 	return c, x, y
+}
+
+// MinMax3Byte finds the smallest and largest of three bytes
+func MinMax3Byte(a, b, c uint8) (uint8, uint8) {
+	if a < b && a < c {
+		if b > c {
+			return a, b
+		}
+		return a, c
+	}
+	if b < a && b < c {
+		if a > c {
+			return b, a
+		}
+		return b, c
+	}
+	if a > b {
+		return c, a
+	}
+	return c, b
 }
 
 // MinMax3 finds the smallest and largest of three numbers
@@ -164,7 +191,7 @@ func Interpolate(p1, p2 *Pos) []*Pos {
 }
 
 // Clamp makes sure x is between the two given numbers by simply cutting it off
-func Clamp(x, a, b uint32) uint32 {
+func ClampByte(x, a, b uint8) uint8 {
 	if x < a {
 		return a
 	}
@@ -172,4 +199,61 @@ func Clamp(x, a, b uint32) uint32 {
 		return b - 1
 	}
 	return x
+}
+
+// Clamp makes sure x is between the two given numbers by simply cutting it off
+func Clamp(x, a, b int32) int32 {
+	if x < a {
+		return a
+	}
+	if x >= b {
+		return b - 1
+	}
+	return x
+}
+
+// ScaleByte scales a byte on the scale from fromA to toA,
+// to a scale from fromB to toB.
+func ScaleByte(x, fromA, toA, fromB, toB uint8) uint8 {
+	widthA := toA - fromA
+	if widthA == 0 {
+		// assume: fromA == toA == fromB
+		// That means that either fromB or toB needs to be returned.
+		// This is impossible to judge if the input scale is not a scale but of 0 width.
+		// Use the number that is closest to fromB or toB.
+		half := toB - fromB
+		if x < fromB+half {
+			return fromB
+		}
+		return toB
+	}
+	r := float32(x-fromA) / float32(widthA)
+	widthB := toB - fromB
+	if widthB == 0 {
+		return toB
+	}
+	return fromB + uint8(r*float32(widthB))
+}
+
+// Scale an int on the scale from fromA to toA,
+// to a scale from fromB to toB.
+func Scale(x, fromA, toA, fromB, toB int32) int32 {
+	widthA := toA - fromA
+	if widthA == 0 {
+		// assume: fromA == toA == fromB
+		// That means that either fromB or toB needs to be returned.
+		// This is impossible to judge if the input scale is not a scale but of 0 width.
+		// Use the number that is closest to fromB or toB.
+		half := toB - fromB
+		if x < fromB+half {
+			return fromB
+		}
+		return toB
+	}
+	r := float32(x-fromA) / float32(widthA)
+	widthB := toB - fromB
+	if widthB == 0 {
+		return toB
+	}
+	return fromB + int32(r*float32(widthB))
 }
