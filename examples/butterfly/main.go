@@ -362,6 +362,8 @@ func run() int {
 						altHeldDown := ks.Mod == sdl.KMOD_LALT || ks.Mod == sdl.KMOD_RALT
 						if !altHeldDown {
 							// alt+enter is not pressed
+							// effect toggle
+							effect = !effect
 							break
 						}
 						// alt+enter is pressed
@@ -386,7 +388,7 @@ func run() int {
 							break
 						}
 						// ctrl+e is pressed
-						// toggle the effect flag
+						// effect toggle
 						effect = !effect
 					case sdl.K_F12:
 						// screenshot
