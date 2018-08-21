@@ -324,15 +324,16 @@ func run() int {
 				flameTimeAdd = -flameTimeAdd
 			}
 
-			// Invert pixels after doing the effects
-			Invert(pixels)
+			if !effect {
+				Invert(pixels)
+			}
 
-			// Stretch the contrast on a copy of the pixels
 			copy(pixelCopy, pixels)
 
 			if effect {
-				fmt.Print("E")
-				//multirender.StretchContrast(cores, pixelCopy, pitch, 0x0, 0xff)
+				Invert(pixels)
+				// Stretch the contrast on a copy of the pixels
+				multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
 			}
 
 			// Draw the center red triangle, in flameTime

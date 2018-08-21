@@ -1,65 +1,109 @@
 package multirender
 
-import "fmt"
+import (
+	"sort"
+)
+
+// WORK IN PROGRESS
 
 // TODO: Also create a concurrent version of StretchConstrast
 // TODO: Also create a version of StretchContrast that disregards alpha.
 // TODO: Also create a version of StretchContrast that uses the colorvalue directly.
 
-func wipStretchContrast(cores int, pixels []uint32, pitch int32, from, to uint8) {
+// A data structure to hold key/value pairs
+type Pair struct {
+	Key   uint8
+	Value int
+}
 
-	// Find minimum and maximum color intensity, then stretch the colors out from 0 to 255
+// A slice of pairs that implements sort.Interface to sort by values
+type PairList []Pair
 
-	// Assume the image has at least one pixel, for the purpose of initializing the min/max values.
-	// This will fail if the image has zero pixels!
-	tmpV := Value(pixels[0])
-	minV, maxV := tmpV, tmpV
+func (p PairList) Len() int           { return len(p) }
+func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p PairList) Less(i, j int) bool { return p[i].Value < p[j].Value }
 
-	// Find the minimum and maximum for each color value
+// StretchContrast uses "cores" CPU cores to concurrently stretch the contrast of the pixels
+// in the given "pixels" slice (of width "pitch"), discarding the "percentage" least
+// and most bright pixels, then scaling the remaining pixels to cover the full 0..255 range.
+func StretchContrast(cores int, pixels []uint32, pitch int32, percentage float32) {
+
+	// 1. Find all pixel values, store them in a map[uint8]int, where the int is the count
+	// 2. Sort the map by the count
+	// 3. Discard the "percentage" least popular intensity values
+	// 4. Find the min and max value in the remaining values, this is lowestV and highestV
+	// 5. Extract lowestV from all pixel values, but clamp to 0
+	// 6. widthV = highestV - lowestV
+	// 7. ratioV = widthV / 256
+	// 8. Multiply all pixel values by ratioV
+	// 9. Success?
+
+	// map from pixelValue to count
+	popularity := make(map[uint8]int)
 	for i := range pixels {
-		tmpV = Value(pixels[i])
-		minV, maxV = MinMax3Byte(minV, maxV, tmpV)
+		v := Value(pixels[i])
+		popularity[v]++
 	}
 
-	if minV == 0 && maxV == 255 {
-		// Nothing to do here
-		return
+	//fmt.Println("POPULARITY", popularity)
+
+	// how large percentage of the values should be discarded?
+	// this may not be correct!
+	lengthOfSelectedKeys := int(float32(len(popularity)) * (1.0 - percentage))
+
+	//fmt.Println("KEEP", lengthOfSelectedKeys)
+
+	// sort the popularity map by value, by placing it in a slice of structs
+	sortablePopularity := make(PairList, len(popularity))
+	i := 0
+	for k, v := range popularity {
+		sortablePopularity[i] = Pair{k, v}
+		i++
+	}
+	sort.Sort(sortablePopularity)
+
+	// sortablePopularity is now a map where the keys is the count, and the values are is the pixel brightness/value
+
+	selectedKeyValues := sortablePopularity[:lengthOfSelectedKeys]
+
+	//fmt.Println("KEPT", selectedKeyValues)
+
+	minValue := uint8(255) // start high, reduce when smaller values are found
+	maxValue := uint8(0)   // start low, increase when larger values are found
+
+	for _, pair := range selectedKeyValues {
+		pixelValue := pair.Key
+		if pixelValue < minValue {
+			minValue = pixelValue
+		}
+		if pixelValue > maxValue {
+			maxValue = pixelValue
+		}
 	}
 
-	fmt.Println("MINV", minV)
-	fmt.Println("MAXV", maxV)
+	lowestV := minValue
+	highestV := maxValue
 
-	// 0 to 84
+	widthV := highestV - lowestV
 
-	// Scale the color of each pixel
+	//fmt.Println("lowestV", lowestV)
+	//fmt.Println("highestV", highestV)
+	//fmt.Println("widthV", widthV)
+
+	// Clamp and scale all pixels
 	var r, g, b, a uint8
 	for i := range pixels {
 		r, g, b, a = ColorValueToRGBA(pixels[i])
 
-        v := Value(pixels[i])
+		ratioR := float32(r-lowestV) / float32(widthV)
+		r = uint8(ratioR * float32(255))
 
-		// First scale the Value for this pixel to be
-		// on the scale from 0 to 255 instead of on
-		// the scale from minV to maxV.
-        vScaled := Scale(int32(v), int32(minV), int32(maxV), 0, 255)
+		ratioG := float32(g-lowestV) / float32(widthV)
+		g = uint8(ratioG * float32(255))
 
-		fmt.Println("VSCALED", i, vScaled)
+		ratioB := float32(b-lowestV) / float32(widthV)
+		b = uint8(ratioB * float32(255))
 
-		// vScaled is now on the scale from minV to maxV
-		// now figure out what v needs to be multiplied with
-		// to get vScaled
-
-		// v * x = vScaled
-		// x = vScaled / v
-        x := float32(vScaled) / float32(v)
-
-		// Now use x to multiply r, g and b and see what happens
-
-		pixels[i] = RGBAToColorValue(
-			uint8(Clamp(int32(float32(r) * x), 0, 255)),
-			uint8(Clamp(int32(float32(g) * x), 0, 255)),
-			uint8(Clamp(int32(float32(b) * x), 0, 255)),
-			uint8(Clamp(int32(float32(a) * x), 0, 255)),
-		)
+		pixels[i] = RGBAToColorValue(r, g, b, a)
 	}
 }
