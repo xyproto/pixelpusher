@@ -47,22 +47,7 @@ func rh() int32 {
 	return rand.Int31n(height)
 }
 
-func Trippy(pixels []uint32, width, height uint32, pitch int32) {
-	for y := int32(1); y < int32(height-1); y++ {
-		for x := int32(1); x < int32(width-1); x++ {
-			left := pixels[y*pitch+x-1]
-			right := pixels[y*pitch+x+1]
-			this := pixels[y*pitch+x]
-			above := pixels[(y+1)*pitch+x]
-			// Dividing the raw uint32 color value!
-			average := (left + right + this + above) / 8
-			pixels[y*pitch+x] = average
-		}
-	}
-}
-
-// TODO: Find out why this is trippy and not the flame effect :D
-func Flame(time float32, pixels []uint32, width, height uint32, pitch int32, enr int) {
+func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr int) {
 
 	// Make the effect increase and decrease in intensity instead of increasing and then dropping down to 0 again
 	stime := float32(math.Sin(float64(time) * math.Pi))
@@ -128,29 +113,28 @@ func Flame(time float32, pixels []uint32, width, height uint32, pitch int32, enr
 	}
 	// Top row
 	for y := int32(0); y < int32(2); y++ {
-		for x := int32(0); x < int32(width); x++ {
+		for x := int32(0); x < width; x++ {
 			pixels[y*pitch+x] = 0
 		}
 	}
 	// Bottom row
-	for y := int32(height - 2); y < int32(height-1); y++ {
-		for x := int32(0); x < int32(width); x++ {
+	for y := height - 2; y < height-1; y++ {
+		for x := int32(0); x < width; x++ {
 			pixels[y*pitch+x] = 0
 		}
 	}
 	// Left col
 	for x := int32(0); x < int32(2); x++ {
-		for y := int32(0); y < int32(height); y++ {
+		for y := int32(0); y < height; y++ {
 			pixels[y*pitch+x] = 0
 		}
 	}
 	// Right col
-	for x := int32(width - 2); x < int32(width-1); x++ {
-		for y := int32(0); y < int32(height); y++ {
+	for x := width - 2; x < width-1; x++ {
+		for y := int32(0); y < height; y++ {
 			pixels[y*pitch+x] = 0
 		}
 	}
-
 }
 
 // Invert the colors, but set the alpha to 255
@@ -181,7 +165,7 @@ func Darken(pixels []uint32) {
 
 // TriangleDance draws a dancing triangle, as time goes from 0.0 to 1.0.
 // The returned value signals to wich degree the graphics should be transitioned out.
-func TriangleDance(time float32, pixels []uint32, width, height int32, pitch int32, cores int, xdirection, ydirection int) (transition float32) {
+func TriangleDance(time float32, pixels []uint32, width, height, pitch int32, cores int, xdirection, ydirection int) (transition float32) {
 
 	size := int32(70)
 
@@ -259,7 +243,8 @@ func run() int {
 
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
+		return 1
 	}
 
 	//texture.SetBlendMode(sdl.BLENDMODE_BLEND)
@@ -267,13 +252,11 @@ func run() int {
 	rand.Seed(time.Now().UnixNano())
 
 	var (
-		pixels    = make([]uint32, width*height)
-		pixelCopy = make([]uint32, width*height)
-		cores     = runtime.NumCPU()
-		event     sdl.Event
-		quit      bool
-		pause     bool
-		effect    bool
+		pixels = make([]uint32, width*height)
+		cores  = runtime.NumCPU()
+		event  sdl.Event
+		quit   bool
+		pause  bool
 	)
 
 	cycleTime := float32(0.0)
@@ -300,9 +283,9 @@ func run() int {
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, -1, 0)
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 0, 1)
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 0, -1)
-				Flame(flameTime, pixels, width, height, pitch, enr)
+				Convolution(flameTime, pixels, width, height, pitch, enr)
 			}
-			Flame(flameTime, pixels, width, height, pitch, enr)
+			Convolution(flameTime, pixels, width, height, pitch, enr)
 
 			// Keep track of the time given to TriangleDance
 			cycleTime += 0.002
@@ -314,7 +297,7 @@ func run() int {
 				}
 			}
 
-			// Keep track of the time given to Flame
+			// Keep track of the time given to Convolution
 			flameTime += flameTimeAdd
 			if flameTime >= 0.81 {
 				flameTime = flameStart
@@ -324,20 +307,11 @@ func run() int {
 				flameTimeAdd = -flameTimeAdd
 			}
 
-			if effect {
-				copy(pixelCopy, pixels)
-				// Invert the pixels back after adding all the things above
-				Invert(pixels)
-				// Stretch the contrast on a copy of the pixels
-				multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
-			} else {
-				Invert(pixels)
-				copy(pixelCopy, pixels)
-			}
+			Invert(pixels)
 
 			// Draw the center red triangle, in flameTime
 			//TriangleDance(flameTime, pixels, width, height, pitch, cores, 0, 0)
-			texture.UpdateRGBA(nil, pixelCopy, pitch)
+			texture.UpdateRGBA(nil, pixels, pitch)
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
 
@@ -378,15 +352,6 @@ func run() int {
 						}
 						// ctrl+s is pressed
 						fallthrough
-					case sdl.K_e:
-						ctrlHeldDown := ks.Mod == sdl.KMOD_LCTRL || ks.Mod == sdl.KMOD_RCTRL
-						if !ctrlHeldDown {
-							// ctrl+e is not pressed
-							break
-						}
-						// ctrl+e is pressed
-						// effect toggle
-						effect = !effect
 					case sdl.K_F12:
 						// screenshot
 						sdl2utils.Screenshot(renderer, "screenshot.png", true)
@@ -401,7 +366,6 @@ func run() int {
 }
 
 func main() {
-	fmt.Println("Press ctrl-e to toggle the constrast streching effect")
 	// This is to allow the deferred functions in run() to kick in at exit
 	os.Exit(run())
 }
