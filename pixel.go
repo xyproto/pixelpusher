@@ -123,28 +123,26 @@ func OrBlue(cores int, pixels []uint32) {
 	pf.Map(cores, pf.OrBlue, pixels)
 }
 
-// Return a pixel, with wraparound instead of overflow
-func GetWrap(pixels []uint32, pos, width, height int32) uint32 {
+// Return a pixel, with position wraparound instead of overflow
+func GetWrap(pixels []uint32, pos, size int32) uint32 {
 	i := pos
-	l := int32(len(pixels))
-	for i >= l {
-		i -= l
+	for i >= size {
+		i -= size
 	}
 	for i < 0 {
-		i += l
+		i += size
 	}
 	return pixels[i]
 }
 
-// Set a pixel, with wraparound instead of overflow
-func SetWrap(pixels []uint32, pos int32, val uint32) {
+// Set a pixel, with position wraparound instead of overflow
+func SetWrap(pixels []uint32, pos, size int32, colorValue uint32) {
 	i := pos
-	l := int32(len(pixels))
-	for i >= l {
-		i -= l
+	for i >= size {
+		i -= size
 	}
 	for i < 0 {
-		i += l
+		i += size
 	}
-	pixels[i] = val
+	pixels[i] = colorValue
 }

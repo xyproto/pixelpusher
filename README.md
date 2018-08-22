@@ -2,7 +2,7 @@
 
 Concurrent software rendering and triangle rasterization.
 
-![screencap](img/screencap.gif)
+![screencap](img/screencap.gif) ![trippy](img/trippy.gif)
 
 ## Features and limitations
 

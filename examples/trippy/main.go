@@ -11,13 +11,13 @@ import (
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/multirender"
-	"github.com/xyproto/sdl2utils"
 	"github.com/xyproto/pf"
+	"github.com/xyproto/sdl2utils"
 )
 
 const (
 	// Size of "worldspace pixels", measured in "screenspace pixels"
-	pixelscale = 4
+	pixelscale = 1
 
 	// The resolution (worldspace)
 	width  = 320
@@ -72,45 +72,47 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 	one1 := int32(1.0 - stime*2.0)
 	one2 := int32(1.0 - time*2.0)
 
+	size := width * height
+
 	for y := int32(0); y < height; y++ {
 		for x := int32(0); x < width; x++ {
 			switch enr {
 			case 0:
 				// "snow patterns"
-				left = multirender.GetWrap(pixels, y*pitch+x-1, width, height)
-				right = multirender.GetWrap(pixels, y*pitch+x+1, width, height)
-				this = multirender.GetWrap(pixels, y*pitch+x, width, height)
-				above = multirender.GetWrap(pixels, (y+1)*pitch+x, width, height)
+				left = multirender.GetWrap(pixels, y*pitch+x-1, size)
+				right = multirender.GetWrap(pixels, y*pitch+x+1, size)
+				this = multirender.GetWrap(pixels, y*pitch+x, size)
+				above = multirender.GetWrap(pixels, (y+1)*pitch+x, size)
 			case 1:
 				// "highway"
-				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, width, height)
-				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, width, height)
-				this = multirender.GetWrap(pixels, y*pitch+x, width, height)
-				above = multirender.GetWrap(pixels, (y-1)*pitch+x, width, height)
+				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = multirender.GetWrap(pixels, y*pitch+x, size)
+				above = multirender.GetWrap(pixels, (y-1)*pitch+x, size)
 			case 2:
 				// "dither highway"
-				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, width, height)
-				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, width, height)
-				this = multirender.GetWrap(pixels, (y-1)*pitch+(x-1), width, height)
-				above = multirender.GetWrap(pixels, (y+1)*pitch+(x+1), width, height)
+				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = multirender.GetWrap(pixels, (y-1)*pitch+(x-1), size)
+				above = multirender.GetWrap(pixels, (y+1)*pitch+(x+1), size)
 			case 3:
 				// "butterfly"
-				left = multirender.GetWrap(pixels, y*pitch+(x-two1), width, height)
-				right = multirender.GetWrap(pixels, y*pitch+(x+two1), width, height)
-				this = multirender.GetWrap(pixels, y*pitch+x*two2, width, height)
-				above = multirender.GetWrap(pixels, (y-two1)*pitch+x*two2, width, height)
+				left = multirender.GetWrap(pixels, y*pitch+(x-two1), size)
+				right = multirender.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = multirender.GetWrap(pixels, y*pitch+x*two2, size)
+				above = multirender.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
 			case 4:
 				// ?
-				left = multirender.GetWrap(pixels, y*pitch+(x-two2), width, height)
-				right = multirender.GetWrap(pixels, y*pitch+(x+two1), width, height)
-				this = multirender.GetWrap(pixels, y*pitch+int32(float32(x)*stime), width, height)
-				above = multirender.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), width, height)
+				left = multirender.GetWrap(pixels, y*pitch+(x-two2), size)
+				right = multirender.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = multirender.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
+				above = multirender.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
 			case 5:
 				// "castle"
-				left = multirender.GetWrap(pixels, y*pitch+(x-one1), width, height)
-				right = multirender.GetWrap(pixels, y*pitch+(x+one1), width, height)
-				this = multirender.GetWrap(pixels, y*pitch+x*two1, width, height)
-				above = multirender.GetWrap(pixels, (y-one2)*pitch+x*two1, width, height)
+				left = multirender.GetWrap(pixels, y*pitch+(x-one1), size)
+				right = multirender.GetWrap(pixels, y*pitch+(x+one1), size)
+				this = multirender.GetWrap(pixels, y*pitch+x*two1, size)
+				above = multirender.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
 			}
 
 			lr, lg, lb, _ := multirender.ColorValueToRGBA(left)
@@ -122,7 +124,7 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 			averageG := uint8(float32(lg+rg+tg+ag) / float32(4.8-stime))
 			averageB := uint8(float32(lb+rb+tb+ab) / float32(4.8-stime))
 
-			multirender.SetWrap(pixels, y*pitch+x, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
+			multirender.SetWrap(pixels, y*pitch+x, width*height, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
 		}
 	}
 }
@@ -197,7 +199,7 @@ func run() int {
 		err      error
 	)
 
-	window, err = sdl.CreateWindow("Butterfly", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
+	window, err = sdl.CreateWindow("Trippy Triangles", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1
@@ -221,8 +223,6 @@ func run() int {
 		return 1
 	}
 
-	//texture.SetBlendMode(sdl.BLENDMODE_BLEND)
-
 	rand.Seed(time.Now().UnixNano())
 
 	var (
@@ -232,7 +232,6 @@ func run() int {
 		event     sdl.Event
 		quit      bool
 		pause     bool
-		trippy    bool
 		recording bool
 	)
 
@@ -247,8 +246,11 @@ func run() int {
 	// effect number
 	enr := 3
 
-	// PixelFunction for inverting the colors, and then or-ing with blue
-	invertOrBlue := pf.Combine(pf.Invert, pf.OrBlue)
+	// post processing effect number
+	lineEffect := 0
+
+	// PixelFunction for inverting the colors
+	lineEffectFunction := pf.Combine(pf.Invert, pf.OrBlue)
 
 	// Innerloop
 	for !quit {
@@ -256,7 +258,7 @@ func run() int {
 		if !pause {
 
 			// Invert pixels, and or with Blue, before drawing
-			pf.Map(cores, invertOrBlue, pixels)
+			pf.Map(cores, lineEffectFunction, pixels)
 
 			if loopCounter%4 == 0 {
 				// Draw to the pixel buffer
@@ -292,11 +294,7 @@ func run() int {
 			copy(pixelCopy, pixels)
 
 			// Invert the pixels back after adding all the things above
-			pf.Map(cores, invertOrBlue, pixels)
-			if trippy {
-				Trippy(pixels, width, height, pitch)
-				TriangleDance(cores, cycleTime, pixels, width, height, pitch, 0, 0)
-			}
+			pf.Map(cores, lineEffectFunction, pixels)
 
 			// Stretch the contrast on a copy of the pixels
 			multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
@@ -309,7 +307,7 @@ func run() int {
 			renderer.Present()
 
 			if recording {
-				filename := fmt.Sprintf("trippy%d.png", frameCounter)
+				filename := fmt.Sprintf("frame%05d.png", frameCounter)
 				multirender.SavePixelsToPNG(pixelCopy, pitch, filename, true)
 				frameCounter++
 			}
@@ -351,9 +349,19 @@ func run() int {
 						}
 						// ctrl+s is pressed
 						fallthrough
-					case sdl.K_SPACE, sdl.K_t:
-						// extra effect toggle
-						trippy = !trippy
+					case sdl.K_SPACE:
+						// Alternate between PixelFunctions that are applied as a post-processing filter
+						lineEffect++
+						if lineEffect > 1 {
+							lineEffect = 0
+						}
+						switch lineEffect {
+						case 0:
+							// The combined pixel functions Invert and OrBlue
+							lineEffectFunction = pf.Combine(pf.Invert, pf.OrBlue)
+						case 1:
+							lineEffectFunction = pf.Invert
+						}
 					case sdl.K_F12:
 						// screenshot
 						sdl2utils.Screenshot(renderer, "screenshot.png", true)
