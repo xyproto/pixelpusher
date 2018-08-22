@@ -3,6 +3,8 @@ package multirender
 import (
 	"encoding/binary"
 	"image/color"
+
+	"github.com/xyproto/pf"
 )
 
 // Pixel draws a pixel to the pixel buffer
@@ -71,14 +73,69 @@ func Alpha(cv uint32) uint8 {
 	return bs[3]
 }
 
-// TODO: Also create a Value function that disregards the alpha value
-
 // Extract the color value / intensity from a ARGB uint32 color value
-func Value(cv uint32) uint8 {
+func ValueWithAlpha(cv uint32) uint8 {
 	// TODO: This can be optimized
 	bs := make([]uint8, 4)
 	binary.LittleEndian.PutUint32(bs, cv)
 	grayscaleColor := float32(bs[2]+bs[1]+bs[0]) / float32(3)
 	alpha := float32(bs[3]) / float32(255)
 	return uint8(grayscaleColor * alpha)
+}
+
+// Extract the color value / intensity from a ARGB uint32 color value.
+// Ignores alpha.
+func Value(cv uint32) uint8 {
+	// TODO: This can be optimized
+	bs := make([]uint8, 4)
+	binary.LittleEndian.PutUint32(bs, cv)
+	grayscaleColor := float32(bs[2]+bs[1]+bs[0]) / float32(3)
+	return uint8(grayscaleColor)
+}
+
+// RemoveRed removes all red color.
+func RemoveRed(cores int, pixels []uint32) {
+	pf.Map(cores, pf.RemoveRed, pixels)
+}
+
+// RemoveGreen removes all green color.
+func RemoveGreen(cores int, pixels []uint32) {
+	// TODO: Make this multicore
+	for i := range pixels {
+		// ARGB, keep everything but G
+		pixels[i] = pixels[i] & 0xffff00ff
+	}
+}
+
+// RemoveBlue removes all blue color.
+func RemoveBlue(cores int, pixels []uint32) {
+	// TODO: Make this multicore
+	for i := range pixels {
+		// ARGB, keep everything but R
+		pixels[i] = pixels[i] & 0xff00ffff
+	}
+}
+
+// Or every pixel value with red
+func OrRed(cores int, pixels []uint32) {
+	for i := range pixels {
+		// ARGB
+		pixels[i] |= 0x00ff0000
+	}
+}
+
+// Or every pixel value with green
+func OrGreen(cores int, pixels []uint32) {
+	for i := range pixels {
+		// ARGB
+		pixels[i] |= 0x0000ff00
+	}
+}
+
+// Or every pixel value with blue
+func OrBlue(cores int, pixels []uint32) {
+	for i := range pixels {
+		// ARGB
+		pixels[i] |= 0x000000ff
+	}
 }

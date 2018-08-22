@@ -7,11 +7,13 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/multirender"
 	"github.com/xyproto/sdl2utils"
+	"github.com/xyproto/pf"
 )
 
 const (
@@ -64,7 +66,7 @@ func Trippy(pixels []uint32, width, height, pitch int32) {
 // Return a pixel, with wraparound instead of overflow
 func GetWrap(pixels []uint32, pos, width, height int32) uint32 {
 	i := pos
-	for i >= width * height {
+	for i >= width*height {
 		i -= (width * height)
 	}
 	for i < 0 {
@@ -76,7 +78,7 @@ func GetWrap(pixels []uint32, pos, width, height int32) uint32 {
 // Set a pixel, with wraparound instead of overflow
 func SetWrap(pixels []uint32, pos int32, val uint32) {
 	i := pos
-	for i >= width * height {
+	for i >= width*height {
 		i -= (width * height)
 	}
 	for i < 0 {
@@ -84,7 +86,6 @@ func SetWrap(pixels []uint32, pos int32, val uint32) {
 	}
 	pixels[i] = val
 }
-
 
 func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr int) {
 
@@ -148,13 +149,6 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 
 			SetWrap(pixels, y*pitch+x, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
 		}
-	}
-}
-
-// Invert the colors, but set the alpha to 255
-func Invert(pixels []uint32) {
-	for i := range pixels {
-		pixels[i] = (0xffffffff - pixels[i]) | 0x000000ff
 	}
 }
 
@@ -264,6 +258,7 @@ func run() int {
 		quit      bool
 		pause     bool
 		trippy    bool
+		recording bool
 	)
 
 	cycleTime := float32(0.0)
@@ -271,18 +266,22 @@ func run() int {
 	flameTime := flameStart
 	flameTimeAdd := float32(0.0001)
 
-	var loopCounter int64 = 0
+	var loopCounter uint64 = 0
+	var frameCounter uint64 = 0
 
 	// effect number
 	enr := 3
+
+	// PixelFunction for inverting the colors, and then or-ing with blue
+	invertFillBlue := pf.Combine(pf.Invert, pf.FillBlue)
 
 	// Innerloop
 	for !quit {
 
 		if !pause {
 
-			// Invert pixels before drawing
-			Invert(pixels)
+			// Invert pixels, and or with Blue, before drawing
+			pf.Map(cores, invertFillBlue, pixels)
 
 			if loopCounter%4 == 0 {
 				// Draw to the pixel buffer
@@ -318,7 +317,7 @@ func run() int {
 			copy(pixelCopy, pixels)
 
 			// Invert the pixels back after adding all the things above
-			Invert(pixels)
+			pf.Map(cores, invertFillBlue, pixels)
 			if trippy {
 				Trippy(pixels, width, height, pitch)
 				TriangleDance(cores, cycleTime, pixels, width, height, pitch, 0, 0)
@@ -327,10 +326,18 @@ func run() int {
 			// Stretch the contrast on a copy of the pixels
 			multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
 
+			//RemoveBlue(cores, pixelCopy)
+
 			texture.UpdateRGBA(nil, pixelCopy, pitch)
 
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
+
+			if recording {
+				filename := "screenshot" + strconv.Itoa(int(frameCounter)) + ".png"
+				multirender.SavePixelsToPNG(pixelCopy, pitch, filename, true)
+				frameCounter++
+			}
 
 		}
 
@@ -375,6 +382,10 @@ func run() int {
 					case sdl.K_F12:
 						// screenshot
 						sdl2utils.Screenshot(renderer, "screenshot.png", true)
+					case sdl.K_r:
+						// recording
+						recording = !recording
+						frameCounter = 0
 					}
 				}
 			}

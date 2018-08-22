@@ -91,7 +91,8 @@ func run() int {
 
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
+		return 1
 	}
 
 	texture.SetBlendMode(sdl.BLENDMODE_ADD)
@@ -115,9 +116,6 @@ func run() int {
 
 			// Draw pixel buffer to screen
 			texture.UpdateRGBA(nil, pixels, width)
-
-			// Clear the render buffer between each frame
-			//renderer.Clear()
 
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
@@ -147,6 +145,11 @@ func run() int {
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
 						sdl2utils.ToggleFullscreen(window)
+						// Clear pixels at fullscreen toggle, because of blend mode and no double buffering
+						renderer.Clear()
+						for i := range pixels {
+							pixels[i] = 0
+						}
 					case sdl.K_p, sdl.K_SPACE:
 						// pause toggle
 						pause = !pause

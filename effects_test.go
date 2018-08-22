@@ -1,9 +1,9 @@
 package multirender
 
 import (
+	"fmt"
 	"runtime"
 	"testing"
-	"fmt"
 )
 
 func TestStretchContrast(t *testing.T) {

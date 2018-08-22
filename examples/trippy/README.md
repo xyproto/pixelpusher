@@ -5,4 +5,5 @@
 * alt-enter or F11  - fullscreen
 * p or space        - pause
 * q or esc          - quit
+* r                 - record to a series of .png files
 
