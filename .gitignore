@@ -19,3 +19,5 @@ examples/triangles/triangles
 examples/blending/blending
 examples/butterfly/butterfly
 examples/trippy/trippy
+examples/skeleton/skeleton
+examples/wireframe/wireframe

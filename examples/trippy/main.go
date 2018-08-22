@@ -17,7 +17,7 @@ import (
 
 const (
 	// Size of "worldspace pixels", measured in "screenspace pixels"
-	pixelscale = 1
+	pixelscale = 4
 
 	// The resolution (worldspace)
 	width  = 320
