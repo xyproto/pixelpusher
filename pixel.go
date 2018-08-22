@@ -100,42 +100,51 @@ func RemoveRed(cores int, pixels []uint32) {
 
 // RemoveGreen removes all green color.
 func RemoveGreen(cores int, pixels []uint32) {
-	// TODO: Make this multicore
-	for i := range pixels {
-		// ARGB, keep everything but G
-		pixels[i] = pixels[i] & 0xffff00ff
-	}
+	pf.Map(cores, pf.RemoveGreen, pixels)
 }
 
 // RemoveBlue removes all blue color.
 func RemoveBlue(cores int, pixels []uint32) {
-	// TODO: Make this multicore
-	for i := range pixels {
-		// ARGB, keep everything but R
-		pixels[i] = pixels[i] & 0xff00ffff
-	}
+	pf.Map(cores, pf.RemoveBlue, pixels)
 }
 
 // Or every pixel value with red
 func OrRed(cores int, pixels []uint32) {
-	for i := range pixels {
-		// ARGB
-		pixels[i] |= 0x00ff0000
-	}
+	pf.Map(cores, pf.OrRed, pixels)
 }
 
 // Or every pixel value with green
 func OrGreen(cores int, pixels []uint32) {
-	for i := range pixels {
-		// ARGB
-		pixels[i] |= 0x0000ff00
-	}
+	pf.Map(cores, pf.OrGreen, pixels)
 }
 
 // Or every pixel value with blue
 func OrBlue(cores int, pixels []uint32) {
-	for i := range pixels {
-		// ARGB
-		pixels[i] |= 0x000000ff
+	pf.Map(cores, pf.OrBlue, pixels)
+}
+
+// Return a pixel, with wraparound instead of overflow
+func GetWrap(pixels []uint32, pos, width, height int32) uint32 {
+	i := pos
+	l := int32(len(pixels))
+	for i >= l {
+		i -= l
 	}
+	for i < 0 {
+		i += l
+	}
+	return pixels[i]
+}
+
+// Set a pixel, with wraparound instead of overflow
+func SetWrap(pixels []uint32, pos int32, val uint32) {
+	i := pos
+	l := int32(len(pixels))
+	for i >= l {
+		i -= l
+	}
+	for i < 0 {
+		i += l
+	}
+	pixels[i] = val
 }

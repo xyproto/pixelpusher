@@ -57,34 +57,10 @@ func Trippy(pixels []uint32, width, height, pitch int32) {
 			this := pixels[y*pitch+x]
 			above := pixels[(y+1)*pitch+x]
 			// Dividing the raw uint32 color value!
-			average := (left + right + this + above) / 8
+			average := (left + right + this + above) / 4
 			pixels[y*pitch+x] = average
 		}
 	}
-}
-
-// Return a pixel, with wraparound instead of overflow
-func GetWrap(pixels []uint32, pos, width, height int32) uint32 {
-	i := pos
-	for i >= width*height {
-		i -= (width * height)
-	}
-	for i < 0 {
-		i += (width * height)
-	}
-	return pixels[i]
-}
-
-// Set a pixel, with wraparound instead of overflow
-func SetWrap(pixels []uint32, pos int32, val uint32) {
-	i := pos
-	for i >= width*height {
-		i -= (width * height)
-	}
-	for i < 0 {
-		i += (width * height)
-	}
-	pixels[i] = val
 }
 
 func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr int) {
@@ -102,40 +78,40 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 			switch enr {
 			case 0:
 				// "snow patterns"
-				left = GetWrap(pixels, y*pitch+x-1, width, height)
-				right = GetWrap(pixels, y*pitch+x+1, width, height)
-				this = GetWrap(pixels, y*pitch+x, width, height)
-				above = GetWrap(pixels, (y+1)*pitch+x, width, height)
+				left = multirender.GetWrap(pixels, y*pitch+x-1, width, height)
+				right = multirender.GetWrap(pixels, y*pitch+x+1, width, height)
+				this = multirender.GetWrap(pixels, y*pitch+x, width, height)
+				above = multirender.GetWrap(pixels, (y+1)*pitch+x, width, height)
 			case 1:
 				// "highway"
-				left = GetWrap(pixels, (y-1)*pitch+x-1, width, height)
-				right = GetWrap(pixels, (y-1)*pitch+x+1, width, height)
-				this = GetWrap(pixels, y*pitch+x, width, height)
-				above = GetWrap(pixels, (y-1)*pitch+x, width, height)
+				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, width, height)
+				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, width, height)
+				this = multirender.GetWrap(pixels, y*pitch+x, width, height)
+				above = multirender.GetWrap(pixels, (y-1)*pitch+x, width, height)
 			case 2:
 				// "dither highway"
-				left = GetWrap(pixels, (y-1)*pitch+x-1, width, height)
-				right = GetWrap(pixels, (y-1)*pitch+x+1, width, height)
-				this = GetWrap(pixels, (y-1)*pitch+(x-1), width, height)
-				above = GetWrap(pixels, (y+1)*pitch+(x+1), width, height)
+				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, width, height)
+				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, width, height)
+				this = multirender.GetWrap(pixels, (y-1)*pitch+(x-1), width, height)
+				above = multirender.GetWrap(pixels, (y+1)*pitch+(x+1), width, height)
 			case 3:
 				// "butterfly"
-				left = GetWrap(pixels, y*pitch+(x-two1), width, height)
-				right = GetWrap(pixels, y*pitch+(x+two1), width, height)
-				this = GetWrap(pixels, y*pitch+x*two2, width, height)
-				above = GetWrap(pixels, (y-two1)*pitch+x*two2, width, height)
+				left = multirender.GetWrap(pixels, y*pitch+(x-two1), width, height)
+				right = multirender.GetWrap(pixels, y*pitch+(x+two1), width, height)
+				this = multirender.GetWrap(pixels, y*pitch+x*two2, width, height)
+				above = multirender.GetWrap(pixels, (y-two1)*pitch+x*two2, width, height)
 			case 4:
 				// ?
-				left = GetWrap(pixels, y*pitch+(x-two2), width, height)
-				right = GetWrap(pixels, y*pitch+(x+two1), width, height)
-				this = GetWrap(pixels, y*pitch+int32(float32(x)*stime), width, height)
-				above = GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), width, height)
+				left = multirender.GetWrap(pixels, y*pitch+(x-two2), width, height)
+				right = multirender.GetWrap(pixels, y*pitch+(x+two1), width, height)
+				this = multirender.GetWrap(pixels, y*pitch+int32(float32(x)*stime), width, height)
+				above = multirender.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), width, height)
 			case 5:
 				// "castle"
-				left = GetWrap(pixels, y*pitch+(x-one1), width, height)
-				right = GetWrap(pixels, y*pitch+(x+one1), width, height)
-				this = GetWrap(pixels, y*pitch+x*two1, width, height)
-				above = GetWrap(pixels, (y-one2)*pitch+x*two1, width, height)
+				left = multirender.GetWrap(pixels, y*pitch+(x-one1), width, height)
+				right = multirender.GetWrap(pixels, y*pitch+(x+one1), width, height)
+				this = multirender.GetWrap(pixels, y*pitch+x*two1, width, height)
+				above = multirender.GetWrap(pixels, (y-one2)*pitch+x*two1, width, height)
 			}
 
 			lr, lg, lb, _ := multirender.ColorValueToRGBA(left)
@@ -147,7 +123,7 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 			averageG := uint8(float32(lg+rg+tg+ag) / float32(4.8-stime))
 			averageB := uint8(float32(lb+rb+tb+ab) / float32(4.8-stime))
 
-			SetWrap(pixels, y*pitch+x, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
+			multirender.SetWrap(pixels, y*pitch+x, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
 		}
 	}
 }
@@ -263,8 +239,8 @@ func run() int {
 
 	cycleTime := float32(0.0)
 	flameStart := float32(0.75)
-	flameTime := flameStart
-	flameTimeAdd := float32(0.0001)
+	convTime := flameStart
+	convTimeAdd := float32(0.0001)
 
 	var loopCounter uint64 = 0
 	var frameCounter uint64 = 0
@@ -273,7 +249,7 @@ func run() int {
 	enr := 3
 
 	// PixelFunction for inverting the colors, and then or-ing with blue
-	invertFillBlue := pf.Combine(pf.Invert, pf.FillBlue)
+	invertOrBlue := pf.Combine(pf.Invert, pf.OrBlue)
 
 	// Innerloop
 	for !quit {
@@ -281,7 +257,7 @@ func run() int {
 		if !pause {
 
 			// Invert pixels, and or with Blue, before drawing
-			pf.Map(cores, invertFillBlue, pixels)
+			pf.Map(cores, invertOrBlue, pixels)
 
 			if loopCounter%4 == 0 {
 				// Draw to the pixel buffer
@@ -289,9 +265,9 @@ func run() int {
 				TriangleDance(cores, cycleTime, pixels, width, height, pitch, -1, 0)
 				TriangleDance(cores, cycleTime, pixels, width, height, pitch, 0, 1)
 				TriangleDance(cores, cycleTime, pixels, width, height, pitch, 0, -1)
-				Convolution(flameTime, pixels, width, height, pitch, enr)
+				Convolution(convTime, pixels, width, height, pitch, enr)
 			}
-			Convolution(flameTime, pixels, width, height, pitch, enr)
+			Convolution(convTime, pixels, width, height, pitch, enr)
 
 			// Keep track of the time given to TriangleDance
 			cycleTime += 0.002
@@ -304,20 +280,20 @@ func run() int {
 			}
 
 			// Keep track of the time given to Convolution
-			flameTime += flameTimeAdd
-			if flameTime >= 0.81 {
-				flameTime = flameStart
-				flameTimeAdd = -flameTimeAdd
-			} else if flameTime <= flameStart {
-				flameTime = flameStart
-				flameTimeAdd = -flameTimeAdd
+			convTime += convTimeAdd
+			if convTime >= 0.81 {
+				convTime = flameStart
+				convTimeAdd = -convTimeAdd
+			} else if convTime <= flameStart {
+				convTime = flameStart
+				convTimeAdd = -convTimeAdd
 			}
 
 			// Take a copy before applying post-processing
 			copy(pixelCopy, pixels)
 
 			// Invert the pixels back after adding all the things above
-			pf.Map(cores, invertFillBlue, pixels)
+			pf.Map(cores, invertOrBlue, pixels)
 			if trippy {
 				Trippy(pixels, width, height, pitch)
 				TriangleDance(cores, cycleTime, pixels, width, height, pitch, 0, 0)
