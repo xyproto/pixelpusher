@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	"strconv"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -310,7 +309,7 @@ func run() int {
 			renderer.Present()
 
 			if recording {
-				filename := "screenshot" + strconv.Itoa(int(frameCounter)) + ".png"
+				filename := fmt.Sprintf("trippy%d.png", frameCounter)
 				multirender.SavePixelsToPNG(pixelCopy, pitch, filename, true)
 				frameCounter++
 			}
