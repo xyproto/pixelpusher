@@ -401,6 +401,7 @@ func run() int {
 }
 
 func main() {
+	fmt.Println("Press ctrl-e to toggle the constrast streching effect")
 	// This is to allow the deferred functions in run() to kick in at exit
 	os.Exit(run())
 }
