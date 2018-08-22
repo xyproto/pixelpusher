@@ -18,3 +18,4 @@ examples/*/*.png
 examples/triangles/triangles
 examples/blending/blending
 examples/butterfly/butterfly
+examples/trippy/trippy
