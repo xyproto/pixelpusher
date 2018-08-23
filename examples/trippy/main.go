@@ -297,9 +297,7 @@ func run() int {
 			pf.Map(cores, lineEffectFunction, pixels)
 
 			// Stretch the contrast on a copy of the pixels
-			multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
-			//multirender.StretchContrast2(cores, pixelCopy, pitch, cycleTime)
-
+			multirender.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
 			texture.UpdateRGBA(nil, pixelCopy, pitch)
 
 			renderer.Copy(texture, nil, nil)

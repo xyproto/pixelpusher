@@ -38,7 +38,7 @@ func TestStretchContrast2(t *testing.T) {
 	pixels := make([]uint32, 320*200) // ARGB
 
 	pitch := int32(320) // 320 uint32s wide (1x3)
-	cores := runtime.NumCPU()
+	cores := 1          // runtime.NumCPU()
 
 	// Set a few bits to gray
 	pixels[1000] = 0xffc0c0c0
@@ -56,11 +56,11 @@ func TestStretchContrast2(t *testing.T) {
 	copy(pixels1, pixels)
 	copy(pixels2, pixels)
 
-	// Stretch the contrast
-	StretchContrast(cores, pixels1, pitch, 0.9)
+	// Stretch the contrast, in one way
+	GlitchyStretchContrast(cores, pixels1, pitch, 0.9)
 
-	// Stretch the contrast, concurrently
-	StretchContrast2(cores, pixels2, pitch, 0.9)
+	// Stretch the contrast, in a different way
+	StretchContrast(cores, pixels2, pitch, 0.9)
 
 	// Check that they are equal
 	for i := range pixels {
