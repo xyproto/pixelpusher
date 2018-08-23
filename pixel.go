@@ -107,18 +107,18 @@ func RemoveBlue(cores int, pixels []uint32) {
 }
 
 // Turn on all the red bits
-func OrRed(cores int, pixels []uint32) {
-	pf.Map(cores, pf.OrRed, pixels)
+func SetRedBits(cores int, pixels []uint32) {
+	pf.Map(cores, pf.SetRedBits, pixels)
 }
 
 // Turn on all the green bits
-func OrGreen(cores int, pixels []uint32) {
-	pf.Map(cores, pf.OrGreen, pixels)
+func SetGreenBits(cores int, pixels []uint32) {
+	pf.Map(cores, pf.SetGreenBits, pixels)
 }
 
 // Turn on all the blue bits
-func OrBlue(cores int, pixels []uint32) {
-	pf.Map(cores, pf.OrBlue, pixels)
+func SetBlueBits(cores int, pixels []uint32) {
+	pf.Map(cores, pf.SetBlueBits, pixels)
 }
 
 // Turn on all the alpha bits

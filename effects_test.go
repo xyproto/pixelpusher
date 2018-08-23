@@ -47,7 +47,7 @@ func TestStretchContrast2(t *testing.T) {
 	pixels[256] = 0xffc0c0c0
 
 	// Turn on all the green bits
-	green := pf.OrGreen
+	green := pf.SetGreenBits
 	pf.Map(cores, green, pixels)
 
 	pixels1 := make([]uint32, len(pixels))
@@ -71,12 +71,5 @@ func TestStretchContrast2(t *testing.T) {
 			return
 		}
 	}
-
-	// Check that the pixel at position 1000 is correct
-	//if pixels[1000] != 123 {
-	//	fmt.Println(pixels[1000])
-	//	t.Fail()
-	//	return
-	//}
 
 }

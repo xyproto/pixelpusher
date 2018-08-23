@@ -250,7 +250,7 @@ func run() int {
 	lineEffect := 0
 
 	// PixelFunction for inverting the colors
-	lineEffectFunction := pf.Combine(pf.Invert, pf.OrBlue)
+	lineEffectFunction := pf.Combine(pf.Invert, pf.SetBlueBits)
 
 	// Innerloop
 	for !quit {
@@ -356,8 +356,8 @@ func run() int {
 						}
 						switch lineEffect {
 						case 0:
-							// The combined pixel functions Invert and OrBlue
-							lineEffectFunction = pf.Combine(pf.Invert, pf.OrBlue)
+							// The combined pixel functions Invert and SetBlueBits
+							lineEffectFunction = pf.Combine(pf.Invert, pf.SetBlueBits)
 						case 1:
 							lineEffectFunction = pf.Invert
 						}
