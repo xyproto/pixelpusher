@@ -12,6 +12,16 @@ func Pixel(pixels []uint32, x, y int32, c color.RGBA, pitch int32) {
 	pixels[y*pitch+x] = binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
 }
 
+// PixelRGB draws an opaque pixel to the pixel buffer, given red, green and blue
+func PixelRGB(pixels []uint32, x, y int32, r, g, b uint8, pitch int32) {
+	pixels[y*pitch+x] = binary.BigEndian.Uint32([]uint8{0xff, r, g, b})
+}
+
+// FastPixel draws a pixel to the pixel buffer, given a uint32 ARGB value
+func FastPixel(pixels []uint32, x, y int32, colorValue uint32, pitch int32) {
+	pixels[y*pitch+x] = colorValue
+}
+
 // Clear changes all pixels to the given color
 func Clear(pixels []uint32, c color.RGBA) {
 	colorValue := binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
@@ -96,41 +106,52 @@ func RemoveBlue(cores int, pixels []uint32) {
 	pf.Map(cores, pf.RemoveBlue, pixels)
 }
 
-// Or every pixel value with red
+// Turn on all the red bits
 func OrRed(cores int, pixels []uint32) {
 	pf.Map(cores, pf.OrRed, pixels)
 }
 
-// Or every pixel value with green
+// Turn on all the green bits
 func OrGreen(cores int, pixels []uint32) {
 	pf.Map(cores, pf.OrGreen, pixels)
 }
 
-// Or every pixel value with blue
+// Turn on all the blue bits
 func OrBlue(cores int, pixels []uint32) {
 	pf.Map(cores, pf.OrBlue, pixels)
 }
 
+// Turn on all the alpha bits
+func OrAlpha(cores int, pixels []uint32) {
+	pf.Map(cores, pf.OrAlpha, pixels)
+}
+
 // Return a pixel, with position wraparound instead of overflow
-func GetWrap(pixels []uint32, pos, size int32) uint32 {
-	i := pos
-	for i >= size {
-		i -= size
+func GetWrap(pixels []uint32, x, y, w, h, pitch int32) uint32 {
+	if x >= w {
+		x -= w
+	} else if x < 0 {
+		x += w
 	}
-	for i < 0 {
-		i += size
+	if y >= h {
+		y -= h
+	} else if y < 0 {
+		y += h
 	}
-	return pixels[i]
+	return pixels[y*pitch+x]
 }
 
 // Set a pixel, with position wraparound instead of overflow
-func SetWrap(pixels []uint32, pos, size int32, colorValue uint32) {
-	i := pos
-	for i >= size {
-		i -= size
+func SetWrap(pixels []uint32, x, y, w, h int32, colorValue uint32, pitch int32) {
+	if x >= w {
+		x -= w
+	} else if x < 0 {
+		x += w
 	}
-	for i < 0 {
-		i += size
+	if y >= h {
+		y -= h
+	} else if y < 0 {
+		y += h
 	}
-	pixels[i] = colorValue
+	pixels[y*pitch+x] = colorValue
 }
