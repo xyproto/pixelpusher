@@ -79,3 +79,32 @@ func Triangle(cores int, pixels []uint32, x1, y1, x2, y2, x3, y3 int32, c color.
 
 	wg.Wait()
 }
+
+// WireTriangle draws a wireframe triangle, concurrently.
+// Core is the number of goroutines that will be used.
+// pitch is the "width" of the pixel buffer.
+func WireTriangle(cores int, pixels []uint32, x1, y1, x2, y2, x3, y3 int32, c color.RGBA, pitch int32) {
+	if cores >= 3 {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			Line(pixels, x1, y1, x2, y2, c, pitch)
+			wg.Done()
+		}(&wg)
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			Line(pixels, x1, y1, x3, y3, c, pitch)
+			wg.Done()
+		}(&wg)
+		wg.Add(1)
+		go func(wg *sync.WaitGroup) {
+			Line(pixels, x2, y2, x3, y3, c, pitch)
+			wg.Done()
+		}(&wg)
+		wg.Wait()
+	} else {
+		Line(pixels, x1, y1, x2, y2, c, pitch)
+		Line(pixels, x1, y1, x3, y3, c, pitch)
+		Line(pixels, x2, y2, x3, y3, c, pitch)
+	}
+}

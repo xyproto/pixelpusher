@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"math/rand"
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -13,7 +15,7 @@ import (
 
 const (
 	// Size of "worldspace pixels", measured in "screenspace pixels"
-	pixelscale = 4
+	pixelscale = 1
 
 	// The resolution (worldspace)
 	width  = 320
@@ -44,6 +46,18 @@ func rh() int32 {
 	return rand.Int31n(height)
 }
 
+// DrawAll fills the pixel buffer with pixels.
+// "cores" is how many CPU cores should be targeted when drawing triangles,
+// by launching the same number of goroutines.
+func DrawAll(pixels []uint32, cores int) {
+
+	// Draw a triangle, concurrently
+	multirender.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	//multirender.WireTriangle(cores, pixels, 30, 30, 200, 100, 10, 110, color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	//multirender.ALine(pixels, 30, 30, 100, 100, color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	//multirender.Line(pixels, 30, 30, 100, 100, color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+}
+
 func run() int {
 
 	sdl.Init(sdl.INIT_VIDEO)
@@ -54,7 +68,7 @@ func run() int {
 		err      error
 	)
 
-	window, err = sdl.CreateWindow("Wireframe", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
+	window, err = sdl.CreateWindow("Pixels!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1
@@ -68,45 +82,39 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	// Fill the render buffer with black
-	renderer.SetDrawColor(0, 0, 0, opaque)
+	// Fill the render buffer with color #808080
+	renderer.SetDrawColor(0x80, 0x80, 0x80, opaque)
 	renderer.Clear()
 
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
-		return 1
+		panic(err)
 	}
+
+	texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
 
 	rand.Seed(time.Now().UnixNano())
 
 	var (
-		pixels    = make([]uint32, width*height)
-		event     sdl.Event
-		quit      bool
-		pause     bool
-		recording bool
+		pixels = make([]uint32, width*height)
+		cores  = runtime.NumCPU()
+		event  sdl.Event
+		quit   bool
+		pause  bool
 	)
-
-	var loopCounter uint64 = 0
-	var frameCounter uint64 = 0
 
 	// Innerloop
 	for !quit {
 
 		if !pause {
 
-			texture.UpdateRGBA(nil, pixels, pitch)
+			DrawAll(pixels, cores)
+
+			// Draw pixel buffer to screen
+			texture.UpdateRGBA(nil, pixels, width)
 
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
-
-			if recording {
-				filename := fmt.Sprintf("frame%05d.png", frameCounter)
-				multirender.SavePixelsToPNG(pixels, pitch, filename, true)
-				frameCounter++
-			}
-
 		}
 
 		// Check for events
@@ -133,8 +141,7 @@ func run() int {
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
 						sdl2utils.ToggleFullscreen(window)
-					case sdl.K_p, sdl.K_SPACE:
-						// pause toggle
+					case sdl.K_SPACE, sdl.K_p:
 						pause = !pause
 					case sdl.K_s:
 						ctrlHeldDown := ks.Mod == sdl.KMOD_LCTRL || ks.Mod == sdl.KMOD_RCTRL
@@ -145,18 +152,13 @@ func run() int {
 						// ctrl+s is pressed
 						fallthrough
 					case sdl.K_F12:
-						// screenshot
-						sdl2utils.Screenshot(renderer, "screenshot.png", true)
-					case sdl.K_r:
-						// recording
-						recording = !recording
-						frameCounter = 0
+						// save the image
+						multirender.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
 					}
 				}
 			}
 		}
 		sdl.Delay(1000 / frameRate)
-		loopCounter++
 	}
 	return 0
 }

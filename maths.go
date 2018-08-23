@@ -257,3 +257,10 @@ func Scale(x, fromA, toA, fromB, toB int32) int32 {
 	}
 	return fromB + int32(r*float32(widthB))
 }
+
+func Abs(a int32) int32 {
+	if a >= 0 {
+		return a
+	}
+	return -a
+}
