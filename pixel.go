@@ -159,10 +159,10 @@ func SetXYWrap(pixels []uint32, x, y, w, h int32, colorValue uint32, pitch int32
 // Return a pixel, with position wraparound instead of overflow
 func GetWrap(pixels []uint32, pos, size int32) uint32 {
 	i := pos
-	for i >= size {
+	if i >= size {
 		i -= size
 	}
-	for i < 0 {
+	if i < 0 {
 		i += size
 	}
 	return pixels[i]
@@ -171,10 +171,10 @@ func GetWrap(pixels []uint32, pos, size int32) uint32 {
 // Set a pixel, with position wraparound instead of overflow
 func SetWrap(pixels []uint32, pos, size int32, colorValue uint32) {
 	i := pos
-	for i >= size {
+	if i >= size {
 		i -= size
 	}
-	for i < 0 {
+	if i < 0 {
 		i += size
 	}
 	pixels[i] = colorValue
