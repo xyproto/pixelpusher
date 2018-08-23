@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"time"
+	"image/color"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/multirender"
@@ -54,7 +55,7 @@ func run() int {
 		err      error
 	)
 
-	window, err = sdl.CreateWindow("Main", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
+	window, err = sdl.CreateWindow("Red Pixel", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1
@@ -95,6 +96,12 @@ func run() int {
 	for !quit {
 
 		if !pause {
+
+			// Draw a red pixel at 0,0
+			multirender.Pixel(pixels, 0, 0, color.RGBA{255, 0, 0, 255}, pitch)
+
+			// Draw a red pixel at 0,0
+			//pixels[0] = 0xffff0000
 
 			texture.UpdateRGBA(nil, pixels, pitch)
 
