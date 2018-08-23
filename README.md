@@ -6,7 +6,7 @@ Concurrent software rendering and triangle rasterization.
 
 ## Features and limitations
 
-* Can draw software-rendered triangles concurrently, using goroutines. The work of drawing the triangles are divided on the available CPU cores.
+* Can draw software-rendered triangles concurrently, using goroutines. The work of drawing the triangles is divided on the available CPU cores.
 * Provides flat-shaded triangles.
 * Everything is drawn to a `[]uint32` pixel buffer (containing "red", "green", "blue" and "alpha").
 * Tested together with SDL2, but can be used with any graphics library that can output pixels from a pixel buffer.
