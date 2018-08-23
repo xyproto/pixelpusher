@@ -50,12 +50,8 @@ func rh() int32 {
 // "cores" is how many CPU cores should be targeted when drawing triangles,
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int) {
-
 	// Draw a triangle, concurrently
 	multirender.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
-	//multirender.WireTriangle(cores, pixels, 30, 30, 200, 100, 10, 110, color.RGBA{rb(), rb(), rb(), opaque}, pitch)
-	//multirender.ALine(pixels, 30, 30, 100, 100, color.RGBA{rb(), rb(), rb(), opaque}, pitch)
-	//multirender.Line(pixels, 30, 30, 100, 100, color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 }
 
 func run() int {
@@ -68,7 +64,7 @@ func run() int {
 		err      error
 	)
 
-	window, err = sdl.CreateWindow("Pixels!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
+	window, err = sdl.CreateWindow("Triangles!", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1
