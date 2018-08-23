@@ -1,6 +1,0 @@
-github.com/veandco/go-sdl2 v0.0.0-20180814020549-ef9b40122206 h1:NNlyzWoJrw53SDJLruRuu7ZLIPNJUevvX7nxSHRA+Mk=
-github.com/veandco/go-sdl2 v0.0.0-20180814020549-ef9b40122206/go.mod h1:FB+kTpX9YTE+urhYiClnRzpOXbiWgaU3+5F2AB78DPg=
-github.com/xyproto/pf v0.0.0-20180823085839-b8933aadfd5f h1:wirZUlwWiJ/ALbHYvpsN+YTDLegdlEvBst6Ip3nriJ4=
-github.com/xyproto/pf v0.0.0-20180823085839-b8933aadfd5f/go.mod h1:gFY4ElmPdzIugLXkqXbHZ/5YPyMrApUTDXawHCj9KBI=
-github.com/xyproto/sdl2utils v0.0.0-20180822090030-5203c5d2b664 h1:jJoQnaG1uKJtYQtcF3VK7TXXeoOcV3isj7mrlMdGEoU=
-github.com/xyproto/sdl2utils v0.0.0-20180822090030-5203c5d2b664/go.mod h1:/SEUe3Ed5TBJ6kjWqEob0E49WFaAykUUx3WrlIEbl0g=

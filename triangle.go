@@ -22,6 +22,7 @@ func area(p0, p1, p2 *Pos) float32 {
 // drawPartialTriangle draws a part of a triangle
 // areaMod is 1.0 divided on (the area of the triangle, times 2)
 func drawPartialTriangle(wg *sync.WaitGroup, pixels []uint32, p1, p2, p3 *Pos, minX, maxX, minY, maxY int32, areaMod float32, colorValue uint32, pitch int32) {
+	defer wg.Done()
 	for y := minY; y < maxY; y++ {
 		offset := y * pitch
 		for x := minX; x < maxX; x++ {
@@ -30,7 +31,6 @@ func drawPartialTriangle(wg *sync.WaitGroup, pixels []uint32, p1, p2, p3 *Pos, m
 			}
 		}
 	}
-	wg.Done()
 }
 
 // Triangle draws a triangle, concurrently.
@@ -69,6 +69,7 @@ func Triangle(cores int, pixels []uint32, x1, y1, x2, y2, x3, y3 int32, c color.
 		minYCore = y
 		maxYCore = y + ystep
 		wg.Add(1)
+		// TODO: Create a slice of pixels by looking at the min and max values, then pass only that slice on!
 		go drawPartialTriangle(&wg, pixels, p1, p2, p3, minX, maxX, minYCore, maxYCore, areaMod, colorValue, pitch)
 	}
 	// Draw the final part, if there are a few pixels missing at the end
