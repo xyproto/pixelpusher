@@ -191,8 +191,8 @@ func main() {
 }
 ```
 
-# Screenshots
+# General information
 
-Screenshot from the `blending` example:
-
-![blending](img/blending.png)
+* License: MIT
+* Version: 0.1
+* Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
