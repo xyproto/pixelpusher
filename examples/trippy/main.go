@@ -299,8 +299,6 @@ func run() int {
 			// Stretch the contrast on a copy of the pixels
 			multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
 
-			//RemoveBlue(cores, pixelCopy)
-
 			texture.UpdateRGBA(nil, pixelCopy, pitch)
 
 			renderer.Copy(texture, nil, nil)
