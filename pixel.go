@@ -127,7 +127,7 @@ func OrAlpha(cores int, pixels []uint32) {
 }
 
 // Return a pixel, with position wraparound instead of overflow
-func GetWrap(pixels []uint32, x, y, w, h, pitch int32) uint32 {
+func GetXYWrap(pixels []uint32, x, y, w, h, pitch int32) uint32 {
 	if x >= w {
 		x -= w
 	} else if x < 0 {
@@ -142,7 +142,7 @@ func GetWrap(pixels []uint32, x, y, w, h, pitch int32) uint32 {
 }
 
 // Set a pixel, with position wraparound instead of overflow
-func SetWrap(pixels []uint32, x, y, w, h int32, colorValue uint32, pitch int32) {
+func SetXYWrap(pixels []uint32, x, y, w, h int32, colorValue uint32, pitch int32) {
 	if x >= w {
 		x -= w
 	} else if x < 0 {
