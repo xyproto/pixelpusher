@@ -58,12 +58,12 @@ func Alpha(cv uint32) uint8 {
 
 // Extract the red component from a ARGB uint32 color value
 func Red(cv uint32) uint8 {
-	return uint8((cv & 0xff0000) >> 0xffff)
+	return uint8((cv & 0xff0000) >> 16)
 }
 
 // Extract the green component from a ARGB uint32 color value
 func Green(cv uint32) uint8 {
-	return uint8((cv & 0xff00) >> 0xff)
+	return uint8((cv & 0xff00) >> 8)
 }
 
 // Extract the blue component from a ARGB uint32 color value
