@@ -87,20 +87,18 @@ func Triangle(cores int, pixels []uint32, x1, y1, x2, y2, x3, y3 int32, c color.
 func WireTriangle(cores int, pixels []uint32, x1, y1, x2, y2, x3, y3 int32, c color.RGBA, pitch int32) {
 	if cores >= 3 {
 		var wg sync.WaitGroup
-		wg.Add(1)
+		wg.Add(3)
 		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Line(pixels, x1, y1, x2, y2, c, pitch)
-			wg.Done()
 		}(&wg)
-		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Line(pixels, x1, y1, x3, y3, c, pitch)
-			wg.Done()
 		}(&wg)
-		wg.Add(1)
 		go func(wg *sync.WaitGroup) {
+			defer wg.Done()
 			Line(pixels, x2, y2, x3, y3, c, pitch)
-			wg.Done()
 		}(&wg)
 		wg.Wait()
 	} else {
