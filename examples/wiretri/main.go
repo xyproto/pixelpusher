@@ -15,7 +15,7 @@ import (
 
 const (
 	// Size of "worldspace pixels", measured in "screenspace pixels"
-	pixelscale = 1
+	pixelscale = 4
 
 	// The resolution (worldspace)
 	width  = 320
@@ -96,9 +96,9 @@ func run() int {
 	)
 
 	// Fill the pixel buffer with opaque color #808080
-	for i := range pixels {
-		pixels[i] = 0xff808080
-	}
+	//for i := range pixels {
+	//	pixels[i] = 0xff808080
+	//}
 
 	// Innerloop
 	for !quit {
