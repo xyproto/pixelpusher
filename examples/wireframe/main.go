@@ -78,16 +78,12 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	// Fill the render buffer with color #808080
-	renderer.SetDrawColor(0x80, 0x80, 0x80, opaque)
-	renderer.Clear()
-
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, width, height)
 	if err != nil {
 		panic(err)
 	}
 
-	texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
+	//texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -98,6 +94,11 @@ func run() int {
 		quit   bool
 		pause  bool
 	)
+
+	// Fill the pixel buffer with opaque color #808080
+	for i := range pixels {
+		pixels[i] = 0xff808080
+	}
 
 	// Innerloop
 	for !quit {
