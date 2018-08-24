@@ -1,5 +1,7 @@
 package multirender
 
+// The source code in this file is experimental!
+
 import (
 	"github.com/xyproto/pf"
 	"sort"
