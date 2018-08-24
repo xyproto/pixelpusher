@@ -51,6 +51,11 @@ func ColorValueToRGBA(cv uint32) (uint8, uint8, uint8, uint8) {
 	return bs[2], bs[1], bs[0], bs[3]
 }
 
+// Extract the alpha component from a ARGB uint32 color value
+func Alpha(cv uint32) uint8 {
+	return uint8((cv & 0xff000000) >> 0xffffff)
+}
+
 // Extract the red component from a ARGB uint32 color value
 func Red(cv uint32) uint8 {
 	return uint8((cv & 0xff0000) >> 0xffff)
@@ -64,11 +69,6 @@ func Green(cv uint32) uint8 {
 // Extract the blue component from a ARGB uint32 color value
 func Blue(cv uint32) uint8 {
 	return uint8(cv & 0xff)
-}
-
-// Extract the alpha component from a ARGB uint32 color value
-func Alpha(cv uint32) uint8 {
-	return uint8((cv & 0xff000000) >> 0xffffff)
 }
 
 // Extract the color value / intensity from a ARGB uint32 color value

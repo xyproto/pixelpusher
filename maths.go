@@ -99,38 +99,6 @@ func MinMax(a, b int32) (int32, int32) {
 	return b, a
 }
 
-// CorrespondingY takes an Y and three coordinate pairs.
-// The X of the coordinate pair that matches Y is returned.
-// Will panic if there is no match!
-func correspondingY(ySelector, y1, y2, y3, x1, x2, x3 int32) int32 {
-	switch ySelector {
-	case y1:
-		return x1
-	case y2:
-		return x2
-	case y3:
-		return x3
-	default:
-		panic("No corresponding Y!")
-	}
-}
-
-// CorrespondingX takes an X and three coordinate pairs.
-// The Y of the coordinate pair that matches X is returned.
-// Will panic if there is no match!
-func correspondingX(xSelector, y1, y2, y3, x1, x2, x3 int32) int32 {
-	switch xSelector {
-	case x1:
-		return y1
-	case x2:
-		return y2
-	case x3:
-		return y3
-	default:
-		panic("No corresponding X!")
-	}
-}
-
 // Lengths returns the x direction and y direction distance between the two points
 func Lengths(p1, p2 *Pos) (int32, int32) {
 	var xlength, ylength int32
