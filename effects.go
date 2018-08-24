@@ -29,9 +29,6 @@ func (p PairList) Less(i, j int) bool { return p[i].Value < p[j].Value }
 // most unpopular pixel values, then scaling the remaining pixels to cover the full 0..255 range.
 func StretchContrast(cores int, pixels []uint32, pitch int32, discardRatio float32) {
 
-	// TODO: Fix the problem in pf.Map when cores > 1
-	cores = 1
-
 	// Find all pixel values, store them in a map[uint8]int, where the int is the count
 	// TODO: Find a way to concurrently fill several maps, then combine the maps afterwards
 	popularity := make(map[uint8]int)
