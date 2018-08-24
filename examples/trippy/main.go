@@ -233,6 +233,7 @@ func run() int {
 		quit      bool
 		pause     bool
 		recording bool
+		glitch    bool = true
 	)
 
 	cycleTime := float32(0.0)
@@ -246,9 +247,6 @@ func run() int {
 	// effect number
 	enr := 3
 
-	// post processing effect number
-	lineEffect := 0
-
 	// PixelFunction for inverting the colors
 	lineEffectFunction := pf.Combine(pf.Invert, pf.SetBlueBits)
 
@@ -258,7 +256,11 @@ func run() int {
 		if !pause {
 
 			// Invert pixels, and or with Blue, before drawing
-			pf.Map(cores, lineEffectFunction, pixels)
+			if glitch {
+				pf.GlitchyMap(cores, lineEffectFunction, pixels)
+			} else {
+				pf.Map(cores, lineEffectFunction, pixels)
+			}
 
 			if loopCounter%4 == 0 {
 				// Draw to the pixel buffer
@@ -294,10 +296,18 @@ func run() int {
 			copy(pixelCopy, pixels)
 
 			// Invert the pixels back after adding all the things above
-			pf.Map(cores, lineEffectFunction, pixels)
+			if glitch {
+				pf.GlitchyMap(cores, lineEffectFunction, pixels)
+			} else {
+				pf.Map(cores, lineEffectFunction, pixels)
+			}
 
 			// Stretch the contrast on a copy of the pixels
-			multirender.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
+			if glitch {
+				multirender.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
+			} else {
+				multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
+			}
 			texture.UpdateRGBA(nil, pixelCopy, pitch)
 
 			renderer.Copy(texture, nil, nil)
@@ -347,18 +357,8 @@ func run() int {
 						// ctrl+s is pressed
 						fallthrough
 					case sdl.K_SPACE:
-						// Alternate between PixelFunctions that are applied as a post-processing filter
-						lineEffect++
-						if lineEffect > 1 {
-							lineEffect = 0
-						}
-						switch lineEffect {
-						case 0:
-							// The combined pixel functions Invert and SetBlueBits
-							lineEffectFunction = pf.Combine(pf.Invert, pf.SetBlueBits)
-						case 1:
-							lineEffectFunction = pf.Invert
-						}
+						// Toggle the use of the alternative glitch functions, and back
+						glitch = !glitch
 					case sdl.K_F12:
 						// screenshot
 						sdl2utils.Screenshot(renderer, "screenshot.png", true)
