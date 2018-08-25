@@ -20,3 +20,22 @@ func TestColorPacking(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBlend(t *testing.T) {
+	red := RGBAToColorValue(255, 0, 0, 127)
+	blue := RGBAToColorValue(0, 0, 255, 255)
+	r, g, b, a := ColorValueToRGBA(Blend(red, blue))
+	//fmt.Println(r, g, b, a)
+	if r != 63 {
+		t.Fail()
+	}
+	if g != 0 {
+		t.Fail()
+	}
+	if b != 127 {
+		t.Fail()
+	}
+	if a != 191 {
+		t.Fail()
+	}
+}

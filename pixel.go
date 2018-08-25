@@ -7,25 +7,6 @@ import (
 	"github.com/xyproto/pf"
 )
 
-// Blend blends two color values, based on the alpha value
-func Blend(c1, c2 uint32) uint32 {
-	mf := float32(255)
-
-	a1 := float32(Alpha(c1)) / mf
-	a2 := float32(Alpha(c2)) / mf
-
-	// Weight the color values by alpha, then take the average
-	r := uint8((float32(Red(c1))*a1 + float32(Red(c2))*a2) / 2.0)
-	g := uint8((float32(Green(c1))*a1 + float32(Green(c2))*a2) / 2.0)
-	b := uint8((float32(Blue(c1))*a1 + float32(Blue(c2))*a2) / 2.0)
-
-	// Let the new alpha value be the product of the two given alpha values
-	a := uint8(a1 * a2 * mf)
-
-	// Combine the new values to an uint32 (ARGB), and return that
-	return RGBAToColorValue(r, g, b, a)
-}
-
 // Pixel draws a pixel to the pixel buffer
 func Pixel(pixels []uint32, x, y int32, c color.RGBA, pitch int32) {
 	pixels[y*pitch+x] = binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
@@ -39,22 +20,6 @@ func PixelRGB(pixels []uint32, x, y int32, r, g, b uint8, pitch int32) {
 // FastPixel draws a pixel to the pixel buffer, given a uint32 ARGB value
 func FastPixel(pixels []uint32, x, y int32, colorValue uint32, pitch int32) {
 	pixels[y*pitch+x] = colorValue
-}
-
-// Clear changes all pixels to the given color
-func Clear(pixels []uint32, c color.RGBA) {
-	colorValue := binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
-	for i := range pixels {
-		pixels[i] = colorValue
-	}
-}
-
-// FastClear changes all pixels to the given uint32 color value,
-// like 0xff0000ff for: 0xff red, 0x00 green, 0x00 blue and 0xff alpha.
-func FastClear(pixels []uint32, colorValue uint32) {
-	for i := range pixels {
-		pixels[i] = colorValue
-	}
 }
 
 // RGBAToColorValue converts from four bytes to an ARGB uint32 color value
@@ -202,4 +167,43 @@ func SetWrap(pixels []uint32, pos, size int32, colorValue uint32) {
 		i += size
 	}
 	pixels[i] = colorValue
+}
+
+// Blend blends two color values, based on the alpha value
+func Blend(c1, c2 uint32) uint32 {
+	mf := float32(255.0)
+
+	a1 := float32(Alpha(c1)) / mf
+	a2 := float32(Alpha(c2)) / mf
+
+	// Weight the color values by alpha, then take the average
+	r := uint8((float32(Red(c1))*a1 + float32(Red(c2))*a2) / 2.0)
+	g := uint8((float32(Green(c1))*a1 + float32(Green(c2))*a2) / 2.0)
+	b := uint8((float32(Blue(c1))*a1 + float32(Blue(c2))*a2) / 2.0)
+
+	// Let the new alpha value be the product of the two given alpha values
+	//a := uint8(a1 * a2 * mf)
+
+	// Let the new alpha value be the average of the two given alpha values
+	a := uint8(((a1 + a2) / 2) * mf)
+
+	// Combine the new values to an uint32 (ARGB), and return that
+	return RGBAToColorValue(r, g, b, a)
+}
+
+// Add adds one color value on top of another.
+// Only considers the alpha value of the second color value.
+// Returns an opaque color.
+func Add(c1, c2 uint32) uint32 {
+	mf := float32(255.0)
+
+	a2 := float32(Alpha(c2)) / mf
+
+	// Let the second color be affected by the alpha value, but not the first one
+	r := uint8((float32(Red(c1)) + float32(Red(c2))*a2) / 2.0)
+	g := uint8((float32(Green(c1)) + float32(Green(c2))*a2) / 2.0)
+	b := uint8((float32(Blue(c1)) + float32(Blue(c2))*a2) / 2.0)
+
+	// Combine the new values to an uint32 (ARGB), and return that
+	return RGBAToColorValue(r, g, b, 255)
 }
