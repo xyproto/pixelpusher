@@ -1,32 +1,11 @@
 package multirender
 
 import (
-	"encoding/binary"
 	"errors"
 	"image"
-	"image/color"
 	"image/png"
 	"os"
 )
-
-// PixelsToImage converts a pixel buffer to an image.RGBA image
-func PixelsToImage(pixels []uint32, pitch uint32) *image.RGBA {
-	width := pitch
-	height := uint32(len(pixels)) / pitch
-
-	img := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
-
-	bs := make([]uint8, 4)
-	for y := uint32(0); y < height; y++ {
-		for x := uint32(0); x < width; x++ {
-			binary.LittleEndian.PutUint32(bs, pixels[y*pitch+x])
-			c := color.RGBA{bs[2], bs[1], bs[0], bs[3]}
-			img.Set(int(x), int(y), c)
-		}
-	}
-
-	return img
-}
 
 // exists checks if a file already exists
 func exists(filename string) bool {
@@ -57,6 +36,6 @@ func SaveImageToPNG(img *image.RGBA, filename string, overwrite bool) error {
 // Save pixels in uint32 ARGB format to PNG with alpha.
 // pitch is the width of the pixel buffer.
 // Set overwrite to true to allow overwriting files.
-func SavePixelsToPNG(pixels []uint32, pitch uint32, filename string, overwrite bool) error {
+func SavePixelsToPNG(pixels []uint32, pitch int32, filename string, overwrite bool) error {
 	return SaveImageToPNG(PixelsToImage(pixels, pitch), filename, overwrite)
 }
