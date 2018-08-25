@@ -29,8 +29,32 @@ func PixelsToImage(pixels []uint32, pitch int32) *image.RGBA {
 	return img
 }
 
-// BlitImage blits an image on top of a pixel buffer
+// BlitImage blits an image on top of a pixel buffer, while blending
 func BlitImage(pixels []uint32, pitch int32, img *image.RGBA) error {
+	width := pitch
+	height := int32(len(pixels)) / pitch
+
+	rectWidth := int32(img.Rect.Size().X)
+	rectHeight := int32(img.Rect.Size().Y)
+
+	if rectWidth < width || rectHeight < height {
+		return fmt.Errorf("Invalid size (%d, %d) for blitting on pixel buffer of size (%d, %d)", rectWidth, rectHeight, width, height)
+	}
+
+	// Loop through target coordinates
+	for y := int32(0); y < height; y++ {
+		for x := int32(0); x < width; x++ {
+			cv := ColorToColorValue(img.At(int(x), int(y)).(color.RGBA))
+			i := y*pitch + x
+			pixels[i] = Blend(cv, pixels[i])
+		}
+	}
+
+	return nil
+}
+
+// BlitImageOpaque blits an image on top of a pixel buffer, disregarding any previous pixels
+func BlitImageOpaque(pixels []uint32, pitch int32, img *image.RGBA) error {
 	width := pitch
 	height := int32(len(pixels)) / pitch
 

@@ -7,6 +7,25 @@ import (
 	"github.com/xyproto/pf"
 )
 
+// Blend blends two color values, based on the alpha value
+func Blend(c1, c2 uint32) uint32 {
+	mf := float32(255)
+
+	a1 := float32(Alpha(c1)) / mf
+	a2 := float32(Alpha(c2)) / mf
+
+	// Weight the color values by alpha, then take the average
+	r := uint8((float32(Red(c1))*a1 + float32(Red(c2))*a2) / 2.0)
+	g := uint8((float32(Green(c1))*a1 + float32(Green(c2))*a2) / 2.0)
+	b := uint8((float32(Blue(c1))*a1 + float32(Blue(c2))*a2) / 2.0)
+
+	// Let the new alpha value be the product of the two given alpha values
+	a := uint8(a1 * a2 * mf)
+
+	// Combine the new values to an uint32 (ARGB), and return that
+	return RGBAToColorValue(r, g, b, a)
+}
+
 // Pixel draws a pixel to the pixel buffer
 func Pixel(pixels []uint32, x, y int32, c color.RGBA, pitch int32) {
 	pixels[y*pitch+x] = binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
@@ -51,9 +70,14 @@ func ColorValueToRGBA(cv uint32) (uint8, uint8, uint8, uint8) {
 	return bs[2], bs[1], bs[0], bs[3]
 }
 
+// ColorToColorValue converts from color.RGBA to an ARGB uint32 color value
+func ColorToColorValue(c color.RGBA) uint32 {
+	return binary.BigEndian.Uint32([]uint8{c.A, c.R, c.G, c.B})
+}
+
 // Extract the alpha component from a ARGB uint32 color value
 func Alpha(cv uint32) uint8 {
-	return uint8((cv & 0xff000000) >> 0xffffff)
+	return uint8((cv & 0xff000000) >> 24)
 }
 
 // Extract the red component from a ARGB uint32 color value
