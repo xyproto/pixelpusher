@@ -171,7 +171,7 @@ func run() int {
 		pause       bool
 		cameraAngle float32
 		enr         int  = 5
-		cores            = runtime.NumCPU()
+		cores            = runtime.NumCPU() * 2
 		effect      bool = true
 	)
 

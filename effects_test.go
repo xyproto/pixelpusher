@@ -13,7 +13,7 @@ func TestStretchContrast(t *testing.T) {
 	pixels := []uint32{0xff800000, 0xff200000, 0xff500000} // ARGB, ARGB, ARGB
 
 	pitch := int32(1) // 1 uint32 wide (1x3)
-	cores := runtime.NumCPU()
+	cores := runtime.NumCPU() * 2
 
 	// Stretch the contrast
 	StretchContrast(cores, pixels, pitch, 0.9)
