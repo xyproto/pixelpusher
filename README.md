@@ -1,8 +1,8 @@
 # multirender [![Build Status](https://travis-ci.org/xyproto/multirender.svg?branch=master)](https://travis-ci.org/xyproto/multirender) [![GoDoc](https://godoc.org/github.com/xyproto/multirender?status.svg)](http://godoc.org/github.com/xyproto/multirender) [![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/xyproto/multirender/master/LICENSE) [![Report Card](https://img.shields.io/badge/go_report-A+-brightgreen.svg?style=flat)](http://goreportcard.com/report/xyproto/multirender)
 
-Concurrent software rendering and triangle rasterization.
+Fast concurrent software rendering, triangle rasterization and pixel buffer manipulation.
 
-![screencap](img/screencap.gif) ![triangles](img/triangles.png) ![trippy](img/trippy2.gif) ![trippy](img/trippy1.gif)
+![screencap](img/screencap.gif) ![triangles](img/triangles.png)
 
 ## Features and limitations
 
@@ -190,6 +190,10 @@ func main() {
 	os.Exit(run())
 }
 ```
+
+# More screencaps
+
+![trippy](img/trippy2.gif) ![trippy](img/trippy1.gif)
 
 # General information
 
