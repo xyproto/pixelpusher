@@ -191,7 +191,7 @@ func main() {
 }
 ```
 
-# More screencaps
+# Triangles, with glitch effect
 
 ![trippy](img/trippy2.gif) ![trippy](img/trippy1.gif)
 
