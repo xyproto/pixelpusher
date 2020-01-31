@@ -12,14 +12,14 @@
 *.out
 
 # Ignore generated images
-examples/*/*.png
+cmd/*/*.png
 
 # Ignore screenshots
-examples/triangles/triangles
-examples/blending/blending
-examples/butterfly/butterfly
-examples/trippy/trippy
-examples/redpixel/redpixel
-examples/wiretri/wiretri
-examples/cube/cube
-examples/crispyduck/crispyduck
+cmd/triangles/triangles
+cmd/blending/blending
+cmd/butterfly/butterfly
+cmd/trippy/trippy
+cmd/redpixel/redpixel
+cmd/wiretri/wiretri
+cmd/cube/cube
+cmd/crispyduck/crispyduck
