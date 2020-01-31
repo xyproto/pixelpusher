@@ -195,4 +195,4 @@ func main() {
 
 * License: MIT
 * Version: 0.1
-* Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
+* Author: Alexander F. Rødseth &lt;rodseth@gmail.com&gt;
