@@ -88,11 +88,12 @@ func run() int {
 	rand.Seed(time.Now().UnixNano())
 
 	var (
-		pixels = make([]uint32, width*height)
-		cores  = runtime.NumCPU()
-		event  sdl.Event
-		quit   bool
-		pause  bool
+		pixels  = make([]uint32, width*height)
+		cores   = runtime.NumCPU()
+		event   sdl.Event
+		quit    bool
+		pause   bool
+		nodelay bool
 	)
 
 	// Fill the pixel buffer with opaque color #808080
@@ -138,7 +139,9 @@ func run() int {
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
 						sdl2utils.ToggleFullscreen(window)
-					case sdl.K_SPACE, sdl.K_p:
+					case sdl.K_SPACE:
+						nodelay = !nodelay
+					case sdl.K_p:
 						pause = !pause
 					case sdl.K_s:
 						ctrlHeldDown := ks.Mod == sdl.KMOD_LCTRL || ks.Mod == sdl.KMOD_RCTRL
@@ -155,7 +158,9 @@ func run() int {
 				}
 			}
 		}
-		sdl.Delay(1000 / frameRate)
+		if !nodelay {
+			sdl.Delay(1000 / frameRate)
+		}
 	}
 	return 0
 }
