@@ -170,8 +170,8 @@ func run() int {
 		quit        bool
 		pause       bool
 		cameraAngle float32
-		enr         int  = 5
-		cores            = runtime.NumCPU() * 2
+		enr         int = 5
+		cores           = runtime.NumCPU() * 2
 		effect      bool
 	)
 
