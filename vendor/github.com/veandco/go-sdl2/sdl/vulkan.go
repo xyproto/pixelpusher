@@ -23,34 +23,58 @@ VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkSurfaceKHR)
 typedef VkInstance SDL_vulkanInstance;
 typedef VkSurfaceKHR SDL_vulkanSurface;
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_Vulkan_LoadLibrary is not supported before SDL 2.0.6")
+#endif
+
 static int SDL_Vulkan_LoadLibrary(const char *path)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_Vulkan_GetVkGetInstanceProcAddr is not supported before SDL 2.0.6")
+#endif
+
 static void* SDL_Vulkan_GetVkGetInstanceProcAddr(void)
 {
 	return NULL;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_Vulkan_UnloadLibrary is not supported before SDL 2.0.6")
+#endif
+
 static void SDL_Vulkan_UnloadLibrary(void) {}
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_Vulkan_GetInstanceExtensions is not supported before SDL 2.0.6")
+#endif
+
 static int SDL_Vulkan_GetInstanceExtensions(SDL_Window *window, unsigned int *pCount, const char **pNames)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_Vulkan_CreateSurface is not supported before SDL 2.0.6")
+#endif
+
 static int SDL_Vulkan_CreateSurface(SDL_Window *window, VkInstance instance, VkSurfaceKHR *surface)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_Vulkan_GetDrawableSize is not supported before SDL 2.0.6")
+#endif
+
 static void SDL_Vulkan_GetDrawableSize(SDL_Window *window, int *w, int *h) {
 	*w = 0;
 	*h = 0;
@@ -114,22 +138,22 @@ func (window *Window) VulkanGetInstanceExtensions() []string {
 
 // VulkanCreateSurface creates a Vulkan rendering surface for a window.
 // (https://wiki.libsdl.org/SDL_Vulkan_CreateSurface)
-func (window *Window) VulkanCreateSurface(instance interface{}) (surface uintptr, err error) {
+func (window *Window) VulkanCreateSurface(instance interface{}) (surface unsafe.Pointer, err error) {
 	if instance == nil {
-		return 0, errors.New("vulkan: instance is nil")
+		return nil, errors.New("vulkan: instance is nil")
 	}
 	val := reflect.ValueOf(instance)
 	if val.Kind() != reflect.Ptr {
-		return 0, errors.New("vulkan: instance is not a VkInstance (expected kind Ptr, got " + val.Kind().String() + ")")
+		return nil, errors.New("vulkan: instance is not a VkInstance (expected kind Ptr, got " + val.Kind().String() + ")")
 	}
 	var vulkanSurface C.VkSurfaceKHR
 	if C.SDL_Vulkan_CreateSurface(window.cptr(),
 		(C.VkInstance)(unsafe.Pointer(val.Pointer())),
 		(*C.VkSurfaceKHR)(unsafe.Pointer(&vulkanSurface))) == C.SDL_FALSE {
 
-		return 0, GetError()
+		return nil, GetError()
 	}
-	return uintptr(unsafe.Pointer(&vulkanSurface)), nil
+	return unsafe.Pointer(&vulkanSurface), nil
 }
 
 // VulkanGetDrawableSize gets the size of a window's underlying drawable in pixels (for use with setting viewport, scissor & etc).

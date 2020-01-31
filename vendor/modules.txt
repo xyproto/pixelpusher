@@ -4,7 +4,7 @@ github.com/fogleman/fauxgl
 github.com/fogleman/simplify
 # github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 github.com/nfnt/resize
-# github.com/veandco/go-sdl2 v0.0.0-20180925095440-75ff82abc4e3
+# github.com/veandco/go-sdl2 v0.4.0
 github.com/veandco/go-sdl2/sdl
 # github.com/xyproto/pf v0.0.0-20181025124322-7074da227fa9
 github.com/xyproto/pf

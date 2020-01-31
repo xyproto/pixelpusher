@@ -4,7 +4,11 @@ package sdl
 #include "sdl_wrapper.h"
 
 #if !(SDL_VERSION_ATLEAST(2,0,4))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_QueueAudio is not supported before SDL 2.0.4")
+#endif
+
 static int SDL_QueueAudio(SDL_AudioDeviceID dev, const void *data, Uint32 len)
 {
 	return -1;
@@ -19,7 +23,11 @@ static void SDL_ClearQueuedAudio(SDL_AudioDeviceID dev)
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,5))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_DequeueAudio is not supported before SDL 2.0.5")
+#endif
+
 static int SDL_DequeueAudio(SDL_AudioDeviceID dev, const void *data, Uint32 len)
 {
 	return -1;
@@ -31,43 +39,71 @@ static int SDL_DequeueAudio(SDL_AudioDeviceID dev, const void *data, Uint32 len)
 struct _SDL_AudioStream;
 typedef struct _SDL_AudioStream SDL_AudioStream;
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_NewAudioStream is not supported before SDL 2.0.7")
+#endif
+
 static SDL_AudioStream * SDL_NewAudioStream(const SDL_AudioFormat src_format, const Uint8 src_channels, const int src_rate, const SDL_AudioFormat dst_format, const Uint8 dst_channels, const int dst_rate)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_AudioStreamPut is not supported before SDL 2.0.7")
+#endif
+
 static int SDL_AudioStreamPut(SDL_AudioStream *stream, const void *buf, int len)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_AudioStreamGet is not supported before SDL 2.0.7")
+#endif
+
 static int SDL_AudioStreamGet(SDL_AudioStream *stream, void *buf, int len)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_AudioStreamAvailable is not supported before SDL 2.0.7")
+#endif
+
 static int SDL_AudioStreamAvailable(SDL_AudioStream *stream)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_AudioStreamFlush is not supported before SDL 2.0.7")
+#endif
+
 static int SDL_AudioStreamFlush(SDL_AudioStream *stream)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_AudioStreamClear is not supported before SDL 2.0.7")
+#endif
+
 static int SDL_AudioStreamClear(SDL_AudioStream *stream)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_FreeAudioStream is not supported before SDL 2.0.7")
+#endif
+
 static void SDL_FreeAudioStream(SDL_AudioStream *stream)
 {
 }
@@ -92,8 +128,8 @@ const (
 // Audio format values.
 // (https://wiki.libsdl.org/SDL_AudioFormat)
 const (
-	AUDIO_S8 = C.AUDIO_S8 // unsigned 8-bit samples
-	AUDIO_U8 = C.AUDIO_U8 // signed 8-bit samples
+	AUDIO_S8 = C.AUDIO_S8 // signed 8-bit samples
+	AUDIO_U8 = C.AUDIO_U8 // unsigned 8-bit samples
 
 	AUDIO_S16LSB = C.AUDIO_S16LSB // signed 16-bit samples in little-endian byte order
 	AUDIO_S16MSB = C.AUDIO_S16MSB // signed 16-bit samples in big-endian byte order
@@ -581,10 +617,8 @@ func (stream *AudioStream) Flush() (err error) {
 
 // Clear clears any pending data in the stream without converting it
 // TODO: (https://wiki.libsdl.org/SDL_AudioStreamClear)
-func (stream *AudioStream) Clear() (err error) {
-	ret := int(C.SDL_AudioStreamFlush(stream.cptr()))
-	err = errorFromInt(ret)
-	return
+func (stream *AudioStream) Clear() {
+	C.SDL_AudioStreamClear(stream.cptr())
 }
 
 // Free frees the audio stream

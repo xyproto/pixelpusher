@@ -16,21 +16,41 @@ static void SDL_GL_GetDrawableSize(SDL_Window *window, int *w, int *h)
 	*h = 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_ALLOW_HIGHDPI is not supported before SDL 2.0.1")
+#endif
+
 #define SDL_WINDOW_ALLOW_HIGHDPI (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GL_FRAMEBUFFER_SRGB_CAPABLE is not supported before SDL 2.0.1")
+#endif
+
 #define SDL_GL_FRAMEBUFFER_SRGB_CAPABLE (0)
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,4))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_MOUSE_CAPTURE is not supported before SDL 2.0.4")
+#endif
+
 #define SDL_WINDOW_MOUSE_CAPTURE (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GL_CONTEXT_RELEASE_BEHAVIOR is not supported before SDL 2.0.4")
+#endif
+
 #define SDL_GL_CONTEXT_RELEASE_BEHAVIOR (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GetDisplayDPI is not supported before SDL 2.0.4")
+#endif
+
 static int SDL_GetDisplayDPI(int displayIndex, float* ddpi, float* hdpi, float* vdpi)
 {
 	return -1;
@@ -39,59 +59,115 @@ static int SDL_GetDisplayDPI(int displayIndex, float* ddpi, float* hdpi, float* 
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,5))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_SetWindowResizable is not supported before SDL 2.0.5")
+#endif
+
 static void SDL_SetWindowResizable(SDL_Window *window, SDL_bool resizable)
 {
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_SetWindowOpacity is not supported before SDL 2.0.5")
+#endif
+
 static int SDL_SetWindowOpacity(SDL_Window *window, float opacity)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GetWindowOpacity is not supported before SDL 2.0.5")
+#endif
+
 static int SDL_GetWindowOpacity(SDL_Window *window, float *opacity)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GetDisplayUsableBounds is not supported before SDL 2.0.5")
+#endif
+
 static int SDL_GetDisplayUsableBounds(int displayIndex, SDL_Rect* rect)
 {
 	return -1;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_ALWAYS_ON_TOP is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOW_ALWAYS_ON_TOP (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_SKIP_TASKBAR is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOW_SKIP_TASKBAR (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_UTILITY is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOW_UTILITY (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_TOOLTIP is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOW_TOOLTIP (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_POPUP_MENU is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOW_POPUP_MENU (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOWEVENT_TAKE_FOCUS is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOWEVENT_TAKE_FOCUS (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOWEVENT_HIT_TEST is not supported before SDL 2.0.5")
+#endif
+
 #define SDL_WINDOWEVENT_HIT_TEST (0)
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,6))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_WINDOW_VULKAN is not supported before SDL 2.0.6")
+#endif
+
 #define SDL_WINDOW_VULKAN (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GL_CONTEXT_RESET_NOTIFICATION is not supported before SDL 2.0.6")
+#endif
+
 #define SDL_GL_CONTEXT_RESET_NOTIFICATION (0)
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_GL_CONTEXT_NO_ERROR is not supported before SDL 2.0.6")
+#endif
+
 #define SDL_GL_CONTEXT_NO_ERROR (0)
 #endif
 */
@@ -266,13 +342,12 @@ type MessageBoxButtonData struct {
 // MessageBoxData contains title, text, window and other data for a message box.
 // (https://wiki.libsdl.org/SDL_MessageBoxData)
 type MessageBoxData struct {
-	Flags       uint32                 // MESSAGEBOX_ERROR, MESSAGEBOX_WARNING, MESSAGEBOX_INFORMATION
-	Window      *Window                // an parent window, can be nil
-	Title       string                 // an UTF-8 title
-	Message     string                 // an UTF-8 message text
-	NumButtons  int32                  // the number of buttons
-	Buttons     []MessageBoxButtonData // an array of MessageBoxButtonData with size of numbuttons
-	ColorScheme *MessageBoxColorScheme // a MessageBoxColorScheme, can be nil to use system settings
+	Flags       uint32  // MESSAGEBOX_ERROR, MESSAGEBOX_WARNING, MESSAGEBOX_INFORMATION
+	Window      *Window // parent window or nil
+	Title       string
+	Message     string
+	Buttons     []MessageBoxButtonData
+	ColorScheme *MessageBoxColorScheme // nil to use system settings
 }
 
 func (window *Window) cptr() *C.SDL_Window {
@@ -379,7 +454,7 @@ func GetDisplayUsableBounds(displayIndex int) (rect Rect, err error) {
 	return
 }
 
-// GetDisplayMode retruns information about a specific display mode.
+// GetDisplayMode returns information about a specific display mode.
 // (https://wiki.libsdl.org/SDL_GetDisplayMode)
 func GetDisplayMode(displayIndex int, modeIndex int) (mode DisplayMode, err error) {
 	err = errorFromInt(int(
@@ -778,13 +853,17 @@ func ShowMessageBox(data *MessageBoxData) (buttonid int32, err error) {
 		cbtntexts = append(cbtntexts, ctext)
 	}
 
+	var buttonPtr *C.SDL_MessageBoxButtonData
+	if len(cbuttons) > 0 {
+		buttonPtr = &cbuttons[0]
+	}
 	cdata := C.SDL_MessageBoxData{
 		flags:       C.Uint32(data.Flags),
 		window:      data.Window.cptr(),
 		title:       _title,
 		message:     _message,
-		numbuttons:  C.int(data.NumButtons),
-		buttons:     &cbuttons[0],
+		numbuttons:  C.int(len(data.Buttons)),
+		buttons:     buttonPtr,
 		colorScheme: data.ColorScheme.cptr(),
 	}
 

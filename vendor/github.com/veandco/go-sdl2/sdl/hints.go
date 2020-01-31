@@ -4,6 +4,11 @@ package sdl
 #include "sdl_wrapper.h"
 #include "hints.h"
 
+#if !(SDL_VERSION_ATLEAST(2,0,9))
+#define SDL_HINT_MOUSE_DOUBLE_CLICK_TIME ""
+#define SDL_HINT_MOUSE_DOUBLE_CLICK_RADIUS ""
+#endif
+
 #if !(SDL_VERSION_ATLEAST(2,0,8))
 #define SDL_HINT_IOS_HIDE_HOME_INDICATOR ""
 #define SDL_HINT_RETURN_KEY_HIDES_IME ""
@@ -58,6 +63,24 @@ package sdl
 #define SDL_HINT_RENDER_DIRECT3D_THREADSAFE ""
 #define SDL_HINT_VIDEO_HIGHDPI_DISABLED ""
 #endif
+
+#if !(SDL_VERSION_ATLEAST(2,0,10))
+#define SDL_HINT_RENDER_BATCHING ""
+#define SDL_HINT_EVENT_LOGGING ""
+#define SDL_HINT_GAMECONTROLLERCONFIG_FILE ""
+#define SDL_HINT_ANDROID_BLOCK_ON_PAUSE ""
+#define SDL_HINT_MOUSE_TOUCH_EVENTS ""
+#endif
+
+#if SDL_VERSION_ATLEAST(2,0,10)
+
+#if defined(WARN_OUTDATED)
+#pragma message("SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH has been removed in SDL 2.0.10")
+#endif
+
+#define SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH "" // For compatibility
+
+#endif
 */
 import "C"
 import "unsafe"
@@ -78,6 +101,8 @@ const (
 	HINT_VIDEO_X11_XINERAMA                       = C.SDL_HINT_VIDEO_X11_XINERAMA                       // specifies whether the X11 Xinerama extension should be used
 	HINT_VIDEO_X11_XRANDR                         = C.SDL_HINT_VIDEO_X11_XRANDR                         // specifies whether the X11 XRandR extension should be used
 	HINT_GRAB_KEYBOARD                            = C.SDL_HINT_GRAB_KEYBOARD                            // specifies whether grabbing input grabs the keyboard
+	HINT_MOUSE_DOUBLE_CLICK_TIME                  = C.SDL_HINT_MOUSE_DOUBLE_CLICK_TIME                  // specifies the double click time, in milliseconds
+	HINT_MOUSE_DOUBLE_CLICK_RADIUS                = C.SDL_HINT_MOUSE_DOUBLE_CLICK_RADIUS                // specifies the double click radius, in pixels.
 	HINT_MOUSE_RELATIVE_MODE_WARP                 = C.SDL_HINT_MOUSE_RELATIVE_MODE_WARP                 // specifies whether relative mouse mode is implemented using mouse warping
 	HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS             = C.SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS             // specifies if a Window is minimized if it loses key focus when in fullscreen mode
 	HINT_IDLE_TIMER_DISABLED                      = C.SDL_HINT_IDLE_TIMER_DISABLED                      // specifies a variable controlling whether the idle timer is disabled on iOS
@@ -111,6 +136,7 @@ const (
 	HINT_RENDER_LOGICAL_SIZE_MODE                 = C.SDL_HINT_RENDER_LOGICAL_SIZE_MODE                 // specifies a variable controlling the scaling policy for SDL_RenderSetLogicalSize
 	HINT_MOUSE_NORMAL_SPEED_SCALE                 = C.SDL_HINT_MOUSE_NORMAL_SPEED_SCALE                 // specifies a variable setting the speed scale for mouse motion, in floating point, when the mouse is not in relative mode
 	HINT_MOUSE_RELATIVE_SPEED_SCALE               = C.SDL_HINT_MOUSE_RELATIVE_SPEED_SCALE               // specifies a variable setting the scale for mouse motion, in floating point, when the mouse is in relative mode
+	HINT_MOUSE_TOUCH_EVENTS                       = C.SDL_HINT_MOUSE_TOUCH_EVENTS                       // specifies a variable to control whether mouse events should generate synthetic touch events
 	HINT_TOUCH_MOUSE_EVENTS                       = C.SDL_HINT_TOUCH_MOUSE_EVENTS                       // specifies a variable controlling whether touch events should generate synthetic mouse events
 	HINT_WINDOWS_INTRESOURCE_ICON                 = C.SDL_HINT_WINDOWS_INTRESOURCE_ICON                 // specifies a variable to specify custom icon resource id from RC file on Windows platform
 	HINT_WINDOWS_INTRESOURCE_ICON_SMALL           = C.SDL_HINT_WINDOWS_INTRESOURCE_ICON_SMALL           // specifies a variable to specify custom icon resource id from RC file on Windows platform
@@ -119,6 +145,10 @@ const (
 	HINT_TV_REMOTE_AS_JOYSTICK                    = C.SDL_HINT_TV_REMOTE_AS_JOYSTICK                    // specifies a variable controlling whether the Android / tvOS remotes  should be listed as joystick devices, instead of sending keyboard events.
 	HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR       = C.SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR       // specifies a variable controlling whether the X11 _NET_WM_BYPASS_COMPOSITOR hint should be used.
 	HINT_VIDEO_DOUBLE_BUFFER                      = C.SDL_HINT_VIDEO_DOUBLE_BUFFER                      // specifies a variable that tells the video driver that we only want a double buffer.
+	HINT_RENDER_BATCHING                          = C.SDL_HINT_RENDER_BATCHING                          // specifies a variable controlling whether the 2D render API is compatible or efficient.
+	HINT_EVENT_LOGGING                            = C.SDL_HINT_EVENT_LOGGING                            // specifies a variable controlling whether SDL logs all events pushed onto its internal queue.
+	HINT_GAMECONTROLLERCONFIG_FILE                = C.SDL_HINT_GAMECONTROLLERCONFIG_FILE                // specifies a variable that lets you provide a file with extra gamecontroller db entries.
+	HINT_ANDROID_BLOCK_ON_PAUSE                   = C.SDL_HINT_ANDROID_BLOCK_ON_PAUSE                   // specifies a variable to control whether the event loop will block itself when the app is paused.
 )
 
 // An enumeration of hint priorities.

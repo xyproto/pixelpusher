@@ -4,7 +4,11 @@ package sdl
 #include "sdl_wrapper.h"
 
 #if !(SDL_VERSION_ATLEAST(2,0,4))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickPowerLevel is not supported before SDL 2.0.4")
+#endif
+
 typedef enum
 {
     SDL_JOYSTICK_POWER_UNKNOWN = -1,
@@ -16,13 +20,21 @@ typedef enum
     SDL_JOYSTICK_POWER_MAX
 } SDL_JoystickPowerLevel;
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickCurrentPowerLevel is not supported before SDL 2.0.4")
+#endif
+
 static SDL_JoystickPowerLevel SDL_JoystickCurrentPowerLevel(SDL_Joystick* joystick)
 {
 	return SDL_JOYSTICK_POWER_UNKNOWN;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickFromInstanceID is not supported before SDL 2.0.4")
+#endif
+
 static SDL_Joystick* SDL_JoystickFromInstanceID(SDL_JoystickID joyid)
 {
 	return NULL;
@@ -30,7 +42,11 @@ static SDL_Joystick* SDL_JoystickFromInstanceID(SDL_JoystickID joyid)
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,6))
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickType is not supported before SDL 2.0.6")
+#endif
+
 typedef enum
 {
 	SDL_JOYSTICK_TYPE_UNKNOWN,
@@ -45,61 +61,101 @@ typedef enum
 	SDL_JOYSTICK_TYPE_THROTTLE
 } SDL_JoystickType;
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetDeviceVendor is not supported before SDL 2.0.6")
+#endif
+
 static Uint16 SDL_JoystickGetDeviceVendor(int device_index)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetDeviceProduct is not supported before SDL 2.0.6")
+#endif
+
 static Uint16 SDL_JoystickGetDeviceProduct(int device_index)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetDeviceProductVersion is not supported before SDL 2.0.6")
+#endif
+
 static Uint16 SDL_JoystickGetDeviceProductVersion(int device_index)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetDeviceType is not supported before SDL 2.0.6")
+#endif
+
 static SDL_JoystickType SDL_JoystickGetDeviceType(int device_index)
 {
 	return SDL_JOYSTICK_TYPE_UNKNOWN;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetDeviceInstanceID is not supported before SDL 2.0.6")
+#endif
+
 static SDL_JoystickID SDL_JoystickGetDeviceInstanceID(int device_index)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetVendor is not supported before SDL 2.0.6")
+#endif
+
 static Uint16 SDL_JoystickGetVendor(SDL_Joystick* joystick)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetProduct is not supported before SDL 2.0.6")
+#endif
+
 static Uint16 SDL_JoystickGetProduct(SDL_Joystick* joystick)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetProductVersion is not supported before SDL 2.0.6")
+#endif
+
 static Uint16 SDL_JoystickGetProductVersion(SDL_Joystick* joystick)
 {
 	return 0;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetType is not supported before SDL 2.0.6")
+#endif
+
 static SDL_JoystickType SDL_JoystickGetType(SDL_Joystick* joystick)
 {
 	return SDL_JOYSTICK_TYPE_UNKNOWN;
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_JoystickGetAxisInitialState is not supported before SDL 2.0.6")
+#endif
+
 static SDL_bool SDL_JoystickGetAxisInitialState(SDL_Joystick* joystick, int axis, Sint16* state)
 {
 	return SDL_FALSE;
@@ -108,14 +164,54 @@ static SDL_bool SDL_JoystickGetAxisInitialState(SDL_Joystick* joystick, int axis
 
 #if !(SDL_VERSION_ATLEAST(2,0,7))
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_LockJoysticks is not supported before SDL 2.0.7")
+#endif
+
 static void SDL_LockJoysticks()
 {
 }
 
+
+#if defined(WARN_OUTDATED)
 #pragma message("SDL_UnlockJoysticks is not supported before SDL 2.0.7")
+#endif
+
 static void SDL_UnlockJoysticks()
 {
+}
+
+#endif
+
+#if !(SDL_VERSION_ATLEAST(2,0,9))
+
+
+#if defined(WARN_OUTDATED)
+#pragma message("SDL_JoystickGetDevicePlayerIndex is not supported before SDL 2.0.9")
+#endif
+
+static int SDL_JoystickGetDevicePlayerIndex(int device_index)
+{
+	return 0;
+}
+
+#if defined(WARN_OUTDATED)
+#pragma message("SDL_JoystickGetPlayerIndex is not supported before SDL 2.0.9")
+#endif
+
+static int SDL_JoystickGetPlayerIndex(SDL_Joystick *joystick)
+{
+	return 0;
+}
+
+#if defined(WARN_OUTDATED)
+#pragma message("SDL_JoystickRumble is not supported before SDL 2.0.9")
+#endif
+
+static int SDL_JoystickRumble(SDL_Joystick *joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms)
+{
+	return -1;
 }
 
 #endif
@@ -200,6 +296,12 @@ func NumJoysticks() int {
 // (https://wiki.libsdl.org/SDL_JoystickNameForIndex)
 func JoystickNameForIndex(index int) string {
 	return (C.GoString)(C.SDL_JoystickNameForIndex(C.int(index)))
+}
+
+// JoystickGetDevicePlayerIndex returns the player index of a joystick, or -1 if it's not available
+// TODO: (https://wiki.libsdl.org/SDL_JoystickGetDevicePlayerIndex)
+func JoystickGetDevicePlayerIndex(index int) int {
+	return int(C.SDL_JoystickGetDevicePlayerIndex(C.int(index)))
 }
 
 // JoystickGetDeviceGUID returns the implementation dependent GUID for the joystick at a given device index.
@@ -291,6 +393,12 @@ func UnlockJoysticks() {
 // (https://wiki.libsdl.org/SDL_JoystickName)
 func (joy *Joystick) Name() string {
 	return (C.GoString)(C.SDL_JoystickName(joy.cptr()))
+}
+
+// PlayerIndex returns the player index of an opened joystick, or -1 if it's not available.
+// (https://wiki.libsdl.org/SDL_JoystickGetPlayerIndex)
+func (joy *Joystick) PlayerIndex() int {
+	return int(C.SDL_JoystickGetPlayerIndex(joy.cptr()))
 }
 
 // GUID returns the implementation-dependent GUID for the joystick.
@@ -385,6 +493,20 @@ func (joy *Joystick) Ball(ball int, dx, dy *int32) int {
 // (https://wiki.libsdl.org/SDL_JoystickGetButton)
 func (joy *Joystick) Button(button int) byte {
 	return (byte)(C.SDL_JoystickGetButton(joy.cptr(), C.int(button)))
+}
+
+// Rumble triggers a rumble effect
+// Each call to this function cancels any previous rumble effect, and calling it with 0 intensity stops any rumbling.
+//
+// lowFrequencyRumble - The intensity of the low frequency (left) rumble motor, from 0 to 0xFFFF
+// highFrequencyRumble - The intensity of the high frequency (right) rumble motor, from 0 to 0xFFFF
+// durationMS - The duration of the rumble effect, in milliseconds
+//
+// Returns error if rumble isn't supported on this joystick.
+//
+// TODO: (https://wiki.libsdl.org/SDL_JoystickRumble)
+func (joy *Joystick) Rumble(lowFrequencyRumble, highFrequencyRumble uint16, durationMS uint32) error {
+	return errorFromInt(int(C.SDL_JoystickRumble(joy.cptr(), C.Uint16(lowFrequencyRumble), C.Uint16(highFrequencyRumble), C.Uint32(durationMS))))
 }
 
 // Close closes a joystick previously opened with JoystickOpen().

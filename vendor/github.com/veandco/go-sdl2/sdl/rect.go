@@ -20,6 +20,22 @@ type Rect struct {
 	H int32 // the height of the rectangle
 }
 
+// FPoint defines a two dimensional point.
+// TODO: (https://wiki.libsdl.org/SDL_FPoint)
+type FPoint struct {
+	X float32 // the x coordinate of the point
+	Y float32 // the y coordinate of the point
+}
+
+// FRect contains the definition of a rectangle, with the origin at the upper left.
+// TODO: (https://wiki.libsdl.org/SDL_FRect)
+type FRect struct {
+	X float32 // the x location of the rectangle's upper left corner
+	Y float32 // the y location of the rectangle's upper left corner
+	W float32 // the width of the rectangle
+	H float32 // the height of the rectangle
+}
+
 func (p *Point) cptr() *C.SDL_Point {
 	return (*C.SDL_Point)(unsafe.Pointer(p))
 }
@@ -28,9 +44,27 @@ func (a *Rect) cptr() *C.SDL_Rect {
 	return (*C.SDL_Rect)(unsafe.Pointer(a))
 }
 
+func (p *FPoint) cptr() *C.SDL_FPoint {
+	return (*C.SDL_FPoint)(unsafe.Pointer(p))
+}
+
+func (a *FRect) cptr() *C.SDL_FRect {
+	return (*C.SDL_FRect)(unsafe.Pointer(a))
+}
+
 // InRect reports whether the point resides inside a rectangle.
 // (https://wiki.libsdl.org/SDL_PointInRect)
 func (p *Point) InRect(r *Rect) bool {
+	if (p.X >= r.X) && (p.X < (r.X + r.W)) &&
+		(p.Y >= r.Y) && (p.Y < (r.Y + r.H)) {
+		return true
+	}
+	return false
+}
+
+// InRect reports whether the point resides inside a rectangle.
+// (https://wiki.libsdl.org/SDL_PointInRect)
+func (p *FPoint) InRect(r *FRect) bool {
 	if (p.X >= r.X) && (p.X < (r.X + r.W)) &&
 		(p.Y >= r.Y) && (p.Y < (r.Y + r.H)) {
 		return true
@@ -123,6 +157,134 @@ func (a *Rect) Intersect(b *Rect) (Rect, bool) {
 // (https://wiki.libsdl.org/SDL_UnionRect)
 func (a *Rect) Union(b *Rect) Rect {
 	var result Rect
+
+	if a == nil || b == nil {
+		return result
+	}
+
+	// Special case for empty rects
+	if a.Empty() {
+		return *b
+	} else if b.Empty() {
+		return *a
+	} else if a.Empty() && b.Empty() {
+		return result
+	}
+
+	aMin := a.X
+	aMax := aMin + a.W
+	bMin := b.X
+	bMax := bMin + b.W
+	if bMin < aMin {
+		aMin = bMin
+	}
+	result.X = aMin
+	if bMax > aMax {
+		aMax = bMax
+	}
+	result.W = aMax - aMin
+
+	aMin = a.Y
+	aMax = aMin + a.H
+	bMin = b.Y
+	bMax = bMin + b.H
+	if bMin < aMin {
+		aMin = bMin
+	}
+	result.Y = aMin
+	if bMax > aMax {
+		aMax = bMax
+	}
+	result.H = aMax - aMin
+
+	return result
+}
+
+// Empty reports whether a rectangle has no area.
+// (https://wiki.libsdl.org/SDL_RectEmpty)
+func (a *FRect) Empty() bool {
+	return a == nil || a.W <= 0 || a.H <= 0
+}
+
+// Equals reports whether two rectangles are equal.
+// (https://wiki.libsdl.org/SDL_RectEquals)
+func (a *FRect) Equals(b *FRect) bool {
+	if (a != nil) && (b != nil) &&
+		(a.X == b.X) && (a.Y == b.Y) &&
+		(a.W == b.W) && (a.H == b.H) {
+		return true
+	}
+	return false
+}
+
+// HasIntersection reports whether two rectangles intersect.
+// (https://wiki.libsdl.org/SDL_HasIntersection)
+func (a *FRect) HasIntersection(b *FRect) bool {
+	if a == nil || b == nil {
+		return false
+	}
+
+	// Special case for empty rects
+	if a.Empty() || b.Empty() {
+		return false
+	}
+
+	if a.X >= b.X+b.W || a.X+a.W <= b.X || a.Y >= b.Y+b.H || a.Y+a.H <= b.Y {
+		return false
+	}
+
+	return true
+}
+
+// Intersect calculates the intersection of two rectangles.
+// (https://wiki.libsdl.org/SDL_IntersectRect)
+func (a *FRect) Intersect(b *FRect) (FRect, bool) {
+	var result FRect
+
+	if a == nil || b == nil {
+		return result, false
+	}
+
+	// Special case for empty rects
+	if a.Empty() || b.Empty() {
+		result.W = 0
+		result.H = 0
+		return result, false
+	}
+
+	aMin := a.X
+	aMax := aMin + a.W
+	bMin := b.X
+	bMax := bMin + b.W
+	if bMin > aMin {
+		aMin = bMin
+	}
+	result.X = aMin
+	if bMax < aMax {
+		aMax = bMax
+	}
+	result.W = aMax - aMin
+
+	aMin = a.Y
+	aMax = aMin + a.H
+	bMin = b.Y
+	bMax = bMin + b.H
+	if bMin > aMin {
+		aMin = bMin
+	}
+	result.Y = aMin
+	if bMax < aMax {
+		aMax = bMax
+	}
+	result.H = aMax - aMin
+
+	return result, !result.Empty()
+}
+
+// Union calculates the union of two rectangles.
+// (https://wiki.libsdl.org/SDL_UnionRect)
+func (a *FRect) Union(b *FRect) FRect {
+	var result FRect
 
 	if a == nil || b == nil {
 		return result
