@@ -82,15 +82,14 @@ func run() int {
 	rand.Seed(time.Now().UnixNano())
 
 	var (
-		pixels    = make([]uint32, width*height)
-		event     sdl.Event
-		quit      bool
-		pause     bool
-		recording bool
-	)
+		pixels = make([]uint32, width*height)
+		event  sdl.Event
 
-	var loopCounter uint64 = 0
-	var frameCounter uint64 = 0
+		pause, recording, quit bool
+
+		loopCounter  uint64
+		frameCounter uint64
+	)
 
 	// Innerloop
 	for !quit {

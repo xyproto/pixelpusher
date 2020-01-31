@@ -258,7 +258,7 @@ func run() int {
 
 		pause, quit bool
 
-		cycleTime    float32 = 0.0
+		cycleTime    float32
 		flameStart   float32 = 0.75
 		flameTime    float32 = 0.75
 		flameTimeAdd float32 = 0.0001
