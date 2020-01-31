@@ -4,6 +4,8 @@ Fast concurrent software rendering, triangle rasterization and pixel buffer mani
 
 ![screencap](img/screencap.gif) ![triangles](img/triangles.png)
 
+![software rendered duck](img/duck.png) ![software rendered duck with glitch effect](img/glitch.png)
+
 ## Features and limitations
 
 * Can draw software-rendered triangles concurrently, using goroutines. The work of drawing the triangles is divided on the available CPU cores.
