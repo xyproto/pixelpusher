@@ -1,5 +1,7 @@
 module github.com/xyproto/multirender
 
+go 1.3
+
 require (
 	github.com/fogleman/fauxgl v0.0.0-20190627205746-5ab08979c242
 	github.com/fogleman/simplify v0.0.0-20170216171241-d32f302d5046 // indirect
