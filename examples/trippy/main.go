@@ -138,7 +138,7 @@ func clamp(v float32, max uint8) uint8 {
 }
 
 // TriangleDance draws a dancing triangle, as time goes from 0.0 to 1.0.
-// The returned value signals to wich degree the graphics should be transitioned out.
+// The returned value signals to which degree the graphics should be transitioned out.
 func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitch int32, xdirection, ydirection int) (transition float32) {
 
 	time *= time

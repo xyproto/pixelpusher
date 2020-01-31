@@ -164,7 +164,7 @@ func Darken(pixels []uint32) {
 }
 
 // TriangleDance draws a dancing triangle, as time goes from 0.0 to 1.0.
-// The returned value signals to wich degree the graphics should be transitioned out.
+// The returned value signals to which degree the graphics should be transitioned out.
 func TriangleDance(time float32, pixels []uint32, width, height, pitch int32, cores int, xdirection, ydirection int) (transition float32) {
 
 	size := int32(70)
