@@ -152,7 +152,7 @@ func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitc
 	//multirender.FastClear(pixels, bgColorValue)
 
 	// Find a suitable placement and color
-	x := int32(0)
+	var x int32
 	if xdirection > 0 {
 		x = multirender.Clamp(int32(float32(width)*time), size, width-size)
 	} else if xdirection == 0 {
@@ -160,7 +160,7 @@ func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitc
 	} else {
 		x = multirender.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
 	}
-	y := int32(0)
+	var y int32
 	if ydirection > 0 {
 		y = multirender.Clamp(int32(float32(height)*time), size, height-size)
 	} else if ydirection == 0 {

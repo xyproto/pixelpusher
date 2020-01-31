@@ -172,7 +172,7 @@ func run() int {
 		cameraAngle float32
 		enr         int  = 5
 		cores            = runtime.NumCPU() * 2
-		effect      bool = true
+		effect      bool
 	)
 
 	// Innerloop
