@@ -4,9 +4,10 @@ Fast concurrent software rendering, triangle rasterization and pixel buffer mani
 
 ![screencap](img/screencap.gif) ![triangles](img/triangles.png)
 
+![butterflies](img/butterfly.png) ![glitch effect](img/trippy.png) 
+
 ![software rendered duck](img/duck.png) ![software rendered duck with glitch effect](img/glitch.png)
 
-![glitch effect](img/trippy.png) ![butterflies](img/butterfly.png)
 
 ## Features and limitations
 
