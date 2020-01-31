@@ -13,6 +13,8 @@ Fast concurrent software rendering, triangle rasterization and pixel buffer mani
 * Everything you need for creating an oldschool game or demoscene demo that will run on Linux, macOS and Windows, while using all of the cores.
 * Does not support palette cycling, yet.
 
+Requires Go 1.3 or later, and SDL2.
+
 ## Example, using multirender and [SDL2](https://github.com/veandco/go-sdl2):
 
 ```go
