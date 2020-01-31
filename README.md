@@ -14,6 +14,7 @@ Fast concurrent software rendering, triangle rasterization and pixel buffer mani
 * Tested together with SDL2, but can be used with any graphics library that can output pixels from a pixel buffer.
 * Everything you need for creating an oldschool game or demoscene demo that will run on Linux, macOS and Windows, while using all of the cores.
 * Does not support palette cycling, yet.
+* The software rendering of 3D graphics is provided by [fauxgl](https://github.com/fogleman/fauxgl). The outputs from this can be combined with effects from `multirender`.
 
 Requires Go 1.3 or later, and SDL2.
 
