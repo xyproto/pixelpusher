@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"math/rand"
 	"os"
 	"time"
-	"image/color"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/multirender"
