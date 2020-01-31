@@ -47,7 +47,7 @@ func rh() int32 {
 	return rand.Int31n(height)
 }
 
-func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr int) {
+func convolution(time float32, pixels []uint32, width, height, pitch int32, enr int) {
 
 	// Make the effect increase and decrease in intensity instead of increasing and then dropping down to 0 again
 	stime := float32(math.Sin(float64(time) * math.Pi))
@@ -153,7 +153,7 @@ func clamp(v float32, max uint8) uint8 {
 }
 
 // Every pixel that is light, decrease the intensity
-func Darken(pixels []uint32) {
+func darken(pixels []uint32) {
 	for i := range pixels {
 		r, g, b, _ := multirender.ColorValueToRGBA(pixels[i])
 		if r < 20 && g < 20 && b < 20 {
@@ -255,19 +255,17 @@ func run() int {
 		pixels = make([]uint32, width*height)
 		cores  = runtime.NumCPU()
 		event  sdl.Event
-		quit   bool
-		pause  bool
+
+		pause, quit bool
+
+		cycleTime    float32 = 0.0
+		flameStart   float32 = 0.75
+		flameTime    float32 = 0.75
+		flameTimeAdd float32 = 0.0001
+
+		loopCounter int64
+		enr         = 3 // effect number
 	)
-
-	cycleTime := float32(0.0)
-	flameStart := float32(0.75)
-	flameTime := flameStart
-	flameTimeAdd := float32(0.0001)
-
-	var loopCounter int64 = 0
-
-	// effect number
-	enr := 3
 
 	// Innerloop
 	for !quit {
@@ -283,9 +281,9 @@ func run() int {
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, -1, 0)
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 0, 1)
 				TriangleDance(cycleTime, pixels, width, height, pitch, cores, 0, -1)
-				Convolution(flameTime, pixels, width, height, pitch, enr)
+				convolution(flameTime, pixels, width, height, pitch, enr)
 			}
-			Convolution(flameTime, pixels, width, height, pitch, enr)
+			convolution(flameTime, pixels, width, height, pitch, enr)
 
 			// Keep track of the time given to TriangleDance
 			cycleTime += 0.002
@@ -297,7 +295,7 @@ func run() int {
 				}
 			}
 
-			// Keep track of the time given to Convolution
+			// Keep track of the time given to convolution
 			flameTime += flameTimeAdd
 			if flameTime >= 0.81 {
 				flameTime = flameStart
