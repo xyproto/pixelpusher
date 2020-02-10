@@ -216,6 +216,7 @@ func TriangleDance(time float32, pixels []uint32, width, height, pitch int32, co
 func run() int {
 
 	sdl.Init(sdl.INIT_VIDEO)
+	defer sdl.Quit()
 
 	var (
 		window   *sdl.Window

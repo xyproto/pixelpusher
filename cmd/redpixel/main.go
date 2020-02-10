@@ -48,6 +48,7 @@ func rh() int32 {
 func run() int {
 
 	sdl.Init(sdl.INIT_VIDEO)
+	defer sdl.Quit()
 
 	var (
 		window   *sdl.Window

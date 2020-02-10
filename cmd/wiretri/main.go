@@ -57,6 +57,7 @@ func DrawAll(pixels []uint32, cores int) {
 func run() int {
 
 	sdl.Init(sdl.INIT_VIDEO)
+	defer sdl.Quit()
 
 	var (
 		window   *sdl.Window
