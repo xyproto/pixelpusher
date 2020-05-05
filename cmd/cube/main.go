@@ -29,7 +29,7 @@ const (
 	pitch = width
 
 	// Target framerate
-	frameRate = 60
+	frameRate = 60 // 1000
 
 	// Alpha value for opaque colors
 	opaque = 255
@@ -95,7 +95,7 @@ func run() int {
 
 	rand.Seed(time.Now().UnixNano())
 
-	mesh, err := LoadMeshOBJ("cube.obj")
+	mesh, err := LoadMeshOBJ("bevelcube.obj")
 	if err != nil {
 		panic(err)
 	}
