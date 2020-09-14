@@ -1,10 +1,15 @@
-# multirender [![Build Status](https://travis-ci.com/xyproto/multirender.svg?branch=master)](https://travis-ci.com/xyproto/multirender) [![GoDoc](https://godoc.org/github.com/xyproto/multirender?status.svg)](http://godoc.org/github.com/xyproto/multirender) [![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/xyproto/multirender/master/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/multirender)](https://goreportcard.com/report/github.com/xyproto/multirender)
+# multirender
+
+[![Build Status](https://travis-ci.com/xyproto/multirender.svg?branch=master)](https://travis-ci.com/xyproto/multirender)
+[![GoDoc](https://godoc.org/github.com/xyproto/multirender?status.svg)](http://godoc.org/github.com/xyproto/multirender)
+[![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/xyproto/multirender/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/multirender)](https://goreportcard.com/report/github.com/xyproto/multirender)
 
 Fast concurrent software rendering, triangle rasterization and pixel buffer manipulation.
 
 ![screencap](img/screencap.gif) ![triangles](img/triangles.png)
 
-![butterflies](img/butterfly.png) ![glitch effect](img/trippy.png) 
+![butterflies](img/butterfly.png) ![glitch effect](img/trippy.png)
 
 ![software rendered duck](img/duck.png) ![software rendered duck with glitch effect](img/glitch.png)
 
