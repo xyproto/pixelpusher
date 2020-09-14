@@ -38,7 +38,7 @@ func BlitImage(pixels []uint32, pitch int32, img *image.RGBA) error {
 	rectHeight := int32(img.Rect.Size().Y)
 
 	if rectWidth < width || rectHeight < height {
-		return fmt.Errorf("Invalid size (%d, %d) for blitting on pixel buffer of size (%d, %d)", rectWidth, rectHeight, width, height)
+		return fmt.Errorf("invalid size (%d, %d) for blitting on pixel buffer of size (%d, %d)", rectWidth, rectHeight, width, height)
 	}
 
 	// Loop through target coordinates
@@ -63,7 +63,7 @@ func BlitImageOnTop(pixels []uint32, pitch int32, img *image.RGBA) error {
 	rectHeight := int32(img.Rect.Size().Y)
 
 	if rectWidth < width || rectHeight < height {
-		return fmt.Errorf("Invalid size (%d, %d) for blitting on pixel buffer of size (%d, %d)", rectWidth, rectHeight, width, height)
+		return fmt.Errorf("invalid size (%d, %d) for blitting on pixel buffer of size (%d, %d)", rectWidth, rectHeight, width, height)
 	}
 
 	// Loop through target coordinates

@@ -38,7 +38,7 @@ func (v *Vertex) Z() float32 {
 func (v *Vertex) Normalize() error {
 	l := float32(math.Sqrt(float64(v.pos.x*v.pos.x + v.pos.y*v.pos.y + v.pos.z*v.pos.z)))
 	if l == 0 {
-		return errors.New("Normalizing a Vertex with length 0")
+		return errors.New("normalizing a Vertex with length 0")
 	}
 	v.pos.x /= l
 	v.pos.y /= l
