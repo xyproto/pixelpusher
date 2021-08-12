@@ -875,23 +875,23 @@ func (renderer *Renderer) FillRectsF(rects []FRect) error {
 
 // CopyF copies a portion of the texture to the current rendering target.
 // TODO: (https://wiki.libsdl.org/SDL_RenderCopyF)
-func (renderer *Renderer) CopyF(texture *Texture, src, dst *FRect) error {
+func (renderer *Renderer) CopyF(texture *Texture, src *Rect, dst *FRect) error {
 	return errorFromInt(int(
 		C.SDL_RenderCopyF(
 			renderer.cptr(),
 			texture.cptr(),
-			(*C.SDL_Rect)(unsafe.Pointer(src)),
+			src.cptr(),
 			dst.cptr())))
 }
 
 // CopyExF copies a portion of the texture to the current rendering target, optionally rotating it by angle around the given center and also flipping it top-bottom and/or left-right.
 // TODO: (https://wiki.libsdl.org/SDL_RenderCopyExF)
-func (renderer *Renderer) CopyExF(texture *Texture, src, dst *FRect, angle float64, center *FPoint, flip RendererFlip) error {
+func (renderer *Renderer) CopyExF(texture *Texture, src *Rect, dst *FRect, angle float64, center *FPoint, flip RendererFlip) error {
 	return errorFromInt(int(
 		C.SDL_RenderCopyExF(
 			renderer.cptr(),
 			texture.cptr(),
-			(*C.SDL_Rect)(unsafe.Pointer(src)),
+			src.cptr(),
 			dst.cptr(),
 			C.double(angle),
 			center.cptr(),
