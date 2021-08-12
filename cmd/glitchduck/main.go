@@ -11,7 +11,7 @@ import (
 
 	"github.com/fogleman/fauxgl"
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -68,52 +68,52 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 			switch enr {
 			case 0:
 				// "snow patterns"
-				left = multirender.GetWrap(pixels, y*pitch+x-1, size)
-				right = multirender.GetWrap(pixels, y*pitch+x+1, size)
-				this = multirender.GetWrap(pixels, y*pitch+x, size)
-				above = multirender.GetWrap(pixels, (y+1)*pitch+x, size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+x-1, size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+x+1, size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x, size)
+				above = pixelpusher.GetWrap(pixels, (y+1)*pitch+x, size)
 			case 1:
 				// "highway"
-				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, size)
-				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, size)
-				this = multirender.GetWrap(pixels, y*pitch+x, size)
-				above = multirender.GetWrap(pixels, (y-1)*pitch+x, size)
+				left = pixelpusher.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = pixelpusher.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x, size)
+				above = pixelpusher.GetWrap(pixels, (y-1)*pitch+x, size)
 			case 2:
 				// "dither highway"
-				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, size)
-				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, size)
-				this = multirender.GetWrap(pixels, (y-1)*pitch+(x-1), size)
-				above = multirender.GetWrap(pixels, (y+1)*pitch+(x+1), size)
+				left = pixelpusher.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = pixelpusher.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = pixelpusher.GetWrap(pixels, (y-1)*pitch+(x-1), size)
+				above = pixelpusher.GetWrap(pixels, (y+1)*pitch+(x+1), size)
 			case 3:
 				// "butterfly"
-				left = multirender.GetWrap(pixels, y*pitch+(x-two1), size)
-				right = multirender.GetWrap(pixels, y*pitch+(x+two1), size)
-				this = multirender.GetWrap(pixels, y*pitch+x*two2, size)
-				above = multirender.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+(x-two1), size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x*two2, size)
+				above = pixelpusher.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
 			case 4:
 				// ?
-				left = multirender.GetWrap(pixels, y*pitch+(x-two2), size)
-				right = multirender.GetWrap(pixels, y*pitch+(x+two1), size)
-				this = multirender.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
-				above = multirender.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+(x-two2), size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
+				above = pixelpusher.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
 			case 5:
 				// "castle"
-				left = multirender.GetWrap(pixels, y*pitch+(x-one1), size)
-				right = multirender.GetWrap(pixels, y*pitch+(x+one1), size)
-				this = multirender.GetWrap(pixels, y*pitch+x*two1, size)
-				above = multirender.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+(x-one1), size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+(x+one1), size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x*two1, size)
+				above = pixelpusher.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
 			}
 
-			lr, lg, lb, _ := multirender.ColorValueToRGBA(left)
-			rr, rg, rb, _ := multirender.ColorValueToRGBA(right)
-			tr, tg, tb, _ := multirender.ColorValueToRGBA(this)
-			ar, ag, ab, _ := multirender.ColorValueToRGBA(above)
+			lr, lg, lb, _ := pixelpusher.ColorValueToRGBA(left)
+			rr, rg, rb, _ := pixelpusher.ColorValueToRGBA(right)
+			tr, tg, tb, _ := pixelpusher.ColorValueToRGBA(this)
+			ar, ag, ab, _ := pixelpusher.ColorValueToRGBA(above)
 
 			averageR := uint8(float32(lr+rr+tr+ar) / float32(4.8-stime))
 			averageG := uint8(float32(lg+rg+tg+ag) / float32(4.8-stime))
 			averageB := uint8(float32(lb+rb+tb+ab) / float32(4.8-stime))
 
-			multirender.SetWrap(pixels, y*pitch+x, width*height, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
+			pixelpusher.SetWrap(pixels, y*pitch+x, width*height, pixelpusher.RGBAToColorValue(averageR, averageG, averageB, 0xff))
 		}
 	}
 }
@@ -181,12 +181,12 @@ func run() int {
 
 		if !pause {
 			// Clear the pixel buffer
-			multirender.FastClear(pixels, 0xffffffff)
+			pixelpusher.FastClear(pixels, 0xffffffff)
 
 			// Draw a triangle, concurrently
 			if effect {
 				yellow := rb()
-				multirender.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{yellow, yellow, 0, 0x80}, pitch)
+				pixelpusher.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{yellow, yellow, 0, 0x80}, pitch)
 			}
 
 			// Draw a 3D object
@@ -199,7 +199,7 @@ func run() int {
 				Convolution(0.9, pixelCopy, width, height, pitch, enr)
 
 				// Stretch contrast
-				multirender.StretchContrast(cores, pixelCopy, pitch, 0.09)
+				pixelpusher.StretchContrast(cores, pixelCopy, pitch, 0.09)
 
 				// Draw pixel buffer to screen
 				texture.UpdateRGBA(nil, pixelCopy, width)
@@ -216,7 +216,7 @@ func run() int {
 			//}
 
 			// Clear the pixel buffer
-			//multirender.FastClear(pixels, 0)
+			//pixelpusher.FastClear(pixels, 0)
 
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
@@ -262,7 +262,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// save the image
-						multirender.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
+						pixelpusher.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
 					}
 				}
 			}

@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/pf"
 	"github.com/xyproto/sdl2utils"
 )
@@ -79,52 +79,52 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 			switch enr {
 			case 0:
 				// "snow patterns"
-				left = multirender.GetWrap(pixels, y*pitch+x-1, size)
-				right = multirender.GetWrap(pixels, y*pitch+x+1, size)
-				this = multirender.GetWrap(pixels, y*pitch+x, size)
-				above = multirender.GetWrap(pixels, (y+1)*pitch+x, size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+x-1, size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+x+1, size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x, size)
+				above = pixelpusher.GetWrap(pixels, (y+1)*pitch+x, size)
 			case 1:
 				// "highway"
-				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, size)
-				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, size)
-				this = multirender.GetWrap(pixels, y*pitch+x, size)
-				above = multirender.GetWrap(pixels, (y-1)*pitch+x, size)
+				left = pixelpusher.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = pixelpusher.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x, size)
+				above = pixelpusher.GetWrap(pixels, (y-1)*pitch+x, size)
 			case 2:
 				// "dither highway"
-				left = multirender.GetWrap(pixels, (y-1)*pitch+x-1, size)
-				right = multirender.GetWrap(pixels, (y-1)*pitch+x+1, size)
-				this = multirender.GetWrap(pixels, (y-1)*pitch+(x-1), size)
-				above = multirender.GetWrap(pixels, (y+1)*pitch+(x+1), size)
+				left = pixelpusher.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = pixelpusher.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = pixelpusher.GetWrap(pixels, (y-1)*pitch+(x-1), size)
+				above = pixelpusher.GetWrap(pixels, (y+1)*pitch+(x+1), size)
 			case 3:
 				// "butterfly"
-				left = multirender.GetWrap(pixels, y*pitch+(x-two1), size)
-				right = multirender.GetWrap(pixels, y*pitch+(x+two1), size)
-				this = multirender.GetWrap(pixels, y*pitch+x*two2, size)
-				above = multirender.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+(x-two1), size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x*two2, size)
+				above = pixelpusher.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
 			case 4:
 				// ?
-				left = multirender.GetWrap(pixels, y*pitch+(x-two2), size)
-				right = multirender.GetWrap(pixels, y*pitch+(x+two1), size)
-				this = multirender.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
-				above = multirender.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+(x-two2), size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
+				above = pixelpusher.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
 			case 5:
 				// "castle"
-				left = multirender.GetWrap(pixels, y*pitch+(x-one1), size)
-				right = multirender.GetWrap(pixels, y*pitch+(x+one1), size)
-				this = multirender.GetWrap(pixels, y*pitch+x*two1, size)
-				above = multirender.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
+				left = pixelpusher.GetWrap(pixels, y*pitch+(x-one1), size)
+				right = pixelpusher.GetWrap(pixels, y*pitch+(x+one1), size)
+				this = pixelpusher.GetWrap(pixels, y*pitch+x*two1, size)
+				above = pixelpusher.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
 			}
 
-			lr, lg, lb, _ := multirender.ColorValueToRGBA(left)
-			rr, rg, rb, _ := multirender.ColorValueToRGBA(right)
-			tr, tg, tb, _ := multirender.ColorValueToRGBA(this)
-			ar, ag, ab, _ := multirender.ColorValueToRGBA(above)
+			lr, lg, lb, _ := pixelpusher.ColorValueToRGBA(left)
+			rr, rg, rb, _ := pixelpusher.ColorValueToRGBA(right)
+			tr, tg, tb, _ := pixelpusher.ColorValueToRGBA(this)
+			ar, ag, ab, _ := pixelpusher.ColorValueToRGBA(above)
 
 			averageR := uint8(float32(lr+rr+tr+ar) / float32(4.8-stime))
 			averageG := uint8(float32(lg+rg+tg+ag) / float32(4.8-stime))
 			averageB := uint8(float32(lb+rb+tb+ab) / float32(4.8-stime))
 
-			multirender.SetWrap(pixels, y*pitch+x, width*height, multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff))
+			pixelpusher.SetWrap(pixels, y*pitch+x, width*height, pixelpusher.RGBAToColorValue(averageR, averageG, averageB, 0xff))
 		}
 	}
 }
@@ -149,24 +149,24 @@ func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitc
 
 	// The function is responsible for clearing the pixels,
 	// it might want to reuse the pixels from the last time (flame effect)
-	//multirender.FastClear(pixels, bgColorValue)
+	//pixelpusher.FastClear(pixels, bgColorValue)
 
 	// Find a suitable placement and color
 	var x int32
 	if xdirection > 0 {
-		x = multirender.Clamp(int32(float32(width)*time), size, width-size)
+		x = pixelpusher.Clamp(int32(float32(width)*time), size, width-size)
 	} else if xdirection == 0 {
 		x = int32(width / 2)
 	} else {
-		x = multirender.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
+		x = pixelpusher.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
 	}
 	var y int32
 	if ydirection > 0 {
-		y = multirender.Clamp(int32(float32(height)*time), size, height-size)
+		y = pixelpusher.Clamp(int32(float32(height)*time), size, height-size)
 	} else if ydirection == 0 {
 		y = int32(height / 2)
 	} else {
-		y = multirender.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
+		y = pixelpusher.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
 	}
 
 	// Make the center triangle red
@@ -184,7 +184,7 @@ func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitc
 	x3 := x + rand.Int31n(int32(size)) - int32(size/2)
 	y3 := y + rand.Int31n(int32(size)) - int32(size/2)
 
-	multirender.Triangle(cores, pixels, x1, y1, x2, y2, x3, y3, c, pitch)
+	pixelpusher.Triangle(cores, pixels, x1, y1, x2, y2, x3, y3, c, pitch)
 
 	return 0.0
 }
@@ -305,9 +305,9 @@ func run() int {
 
 			// Stretch the contrast on a copy of the pixels
 			if glitch {
-				multirender.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
+				pixelpusher.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
 			} else {
-				multirender.StretchContrast(cores, pixelCopy, pitch, cycleTime)
+				pixelpusher.StretchContrast(cores, pixelCopy, pitch, cycleTime)
 			}
 			texture.UpdateRGBA(nil, pixelCopy, pitch)
 
@@ -316,7 +316,7 @@ func run() int {
 
 			if recording {
 				filename := fmt.Sprintf("frame%05d.png", frameCounter)
-				multirender.SavePixelsToPNG(pixelCopy, pitch, filename, true)
+				pixelpusher.SavePixelsToPNG(pixelCopy, pitch, filename, true)
 				frameCounter++
 			}
 

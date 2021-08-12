@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -99,16 +99,16 @@ func convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 				above = pixels[(y-one2)*pitch+x*two1]
 			}
 
-			lr, lg, lb, _ := multirender.ColorValueToRGBA(left)
-			rr, rg, rb, _ := multirender.ColorValueToRGBA(right)
-			tr, tg, tb, _ := multirender.ColorValueToRGBA(this)
-			ar, ag, ab, _ := multirender.ColorValueToRGBA(above)
+			lr, lg, lb, _ := pixelpusher.ColorValueToRGBA(left)
+			rr, rg, rb, _ := pixelpusher.ColorValueToRGBA(right)
+			tr, tg, tb, _ := pixelpusher.ColorValueToRGBA(this)
+			ar, ag, ab, _ := pixelpusher.ColorValueToRGBA(above)
 
 			averageR := uint8(float32(lr+rr+tr+ar) / float32(4.55-stime))
 			averageG := uint8(float32(lg+rg+tg+ag) / float32(4.55-stime))
 			averageB := uint8(float32(lb+rb+tb+ab) / float32(4.55-stime))
 
-			pixels[y*pitch+x] = multirender.RGBAToColorValue(averageR, averageG, averageB, 0xff)
+			pixels[y*pitch+x] = pixelpusher.RGBAToColorValue(averageR, averageG, averageB, 0xff)
 		}
 	}
 	// Top row
@@ -155,11 +155,11 @@ func clamp(v float32, max uint8) uint8 {
 // Every pixel that is light, decrease the intensity
 func darken(pixels []uint32) {
 	for i := range pixels {
-		r, g, b, _ := multirender.ColorValueToRGBA(pixels[i])
+		r, g, b, _ := pixelpusher.ColorValueToRGBA(pixels[i])
 		if r < 20 && g < 20 && b < 20 {
 			continue
 		}
-		pixels[i] = multirender.RGBAToColorValue(clamp(float32(r)*0.99, 255), clamp(float32(g)*0.99, 255), clamp(float32(b)*0.99, 255), 255)
+		pixels[i] = pixelpusher.RGBAToColorValue(clamp(float32(r)*0.99, 255), clamp(float32(g)*0.99, 255), clamp(float32(b)*0.99, 255), 255)
 	}
 }
 
@@ -173,24 +173,24 @@ func TriangleDance(time float32, pixels []uint32, width, height, pitch int32, co
 
 	// The function is responsible for clearing the pixels,
 	// it might want to reuse the pixels from the last time (flame effect)
-	//multirender.FastClear(pixels, bgColorValue)
+	//pixelpusher.FastClear(pixels, bgColorValue)
 
 	// Find a suitable placement and color
 	var x int32
 	if xdirection > 0 {
-		x = multirender.Clamp(int32(float32(width)*time), size, width-size)
+		x = pixelpusher.Clamp(int32(float32(width)*time), size, width-size)
 	} else if xdirection == 0 {
 		x = int32(width / 2)
 	} else {
-		x = multirender.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
+		x = pixelpusher.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
 	}
 	var y int32
 	if ydirection > 0 {
-		y = multirender.Clamp(int32(float32(height)*time), size, height-size)
+		y = pixelpusher.Clamp(int32(float32(height)*time), size, height-size)
 	} else if ydirection == 0 {
 		y = int32(height / 2)
 	} else {
-		y = multirender.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
+		y = pixelpusher.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
 	}
 
 	// Make the center triangle red
@@ -208,7 +208,7 @@ func TriangleDance(time float32, pixels []uint32, width, height, pitch int32, co
 	x3 := x + rand.Int31n(int32(size)) - int32(size/2)
 	y3 := y + rand.Int31n(int32(size)) - int32(size/2)
 
-	multirender.Triangle(cores, pixels, x1, y1, x2, y2, x3, y3, c, pitch)
+	pixelpusher.Triangle(cores, pixels, x1, y1, x2, y2, x3, y3, c, pitch)
 
 	return 0.0
 }

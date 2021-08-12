@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -51,7 +51,7 @@ func rh() int32 {
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int) {
 	// Draw a triangle, concurrently
-	multirender.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	pixelpusher.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 }
 
 func run() int {
@@ -154,7 +154,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// save the image
-						multirender.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
+						pixelpusher.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
 					}
 				}
 			}

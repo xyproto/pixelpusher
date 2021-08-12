@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -54,11 +54,11 @@ func DrawAll(pixels []uint32, cores int) {
 	var opaqueness uint8 = 1 // Almost completely transparent
 
 	// Draw a triangle, concurrently
-	multirender.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
+	pixelpusher.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
 
 	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
-	go multirender.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
-	go multirender.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0, 0, opaqueness}, pitch)
+	go pixelpusher.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
+	go pixelpusher.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0, 0, opaqueness}, pitch)
 }
 
 func run() int {

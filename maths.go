@@ -1,4 +1,4 @@
-package multirender
+package pixelpusher
 
 // Functions for sorting, clamping, finding minimum and maximum etc.
 // The default type for these functions is int32.

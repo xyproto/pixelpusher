@@ -1,4 +1,4 @@
-package multirender
+package pixelpusher
 
 import (
 	"testing"

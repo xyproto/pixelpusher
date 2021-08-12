@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/fogleman/fauxgl"
 	"github.com/nfnt/resize"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"image"
 	"math"
 )
@@ -75,5 +75,5 @@ func DrawMesh(pixels []uint32, pitch int32, mesh *fauxgl.Mesh, cameraAngle float
 		return errors.New("Could not convert image to *image.RGBA")
 	}
 
-	return multirender.BlitImageOnTop(pixels, pitch, img)
+	return pixelpusher.BlitImageOnTop(pixels, pitch, img)
 }

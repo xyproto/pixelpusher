@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -98,7 +98,7 @@ func run() int {
 		if !pause {
 
 			// Draw a red pixel at 0,0
-			multirender.Pixel(pixels, 0, 0, color.RGBA{255, 0, 0, 255}, pitch)
+			pixelpusher.Pixel(pixels, 0, 0, color.RGBA{255, 0, 0, 255}, pitch)
 
 			// Draw a red pixel at 0,0
 			//pixels[0] = 0xffff0000
@@ -110,7 +110,7 @@ func run() int {
 
 			if recording {
 				filename := fmt.Sprintf("frame%05d.png", frameCounter)
-				multirender.SavePixelsToPNG(pixels, pitch, filename, true)
+				pixelpusher.SavePixelsToPNG(pixels, pitch, filename, true)
 				frameCounter++
 			}
 

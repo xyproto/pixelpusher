@@ -10,7 +10,7 @@ import (
 
 	"github.com/fogleman/fauxgl"
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -55,7 +55,7 @@ func rh() int32 {
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int, mesh *fauxgl.Mesh, cameraAngle float32, meshHexColor string) {
 	// Draw a triangle, concurrently
-	multirender.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	pixelpusher.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 
 	// Draw a 3D object on top
 	DrawMesh(pixels, pitch, mesh, cameraAngle, meshHexColor)
@@ -165,7 +165,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// save the image
-						multirender.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
+						pixelpusher.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
 					}
 				}
 			}
