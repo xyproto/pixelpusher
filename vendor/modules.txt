@@ -12,7 +12,7 @@ github.com/veandco/go-sdl2/sdl
 # github.com/xyproto/multirender v0.0.0-20210812160008-b09d0e851269
 ## explicit
 github.com/xyproto/multirender
-# github.com/xyproto/pf v0.0.0-20181025124322-7074da227fa9
+# github.com/xyproto/pf v0.1.0
 ## explicit
 github.com/xyproto/pf
 # github.com/xyproto/sdl2utils v0.0.0-20180825143422-1d41a661b4cb
