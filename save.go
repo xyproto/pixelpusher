@@ -27,10 +27,7 @@ func SaveImageToPNG(img *image.RGBA, filename string, overwrite bool) error {
 		f.Close()
 		return err
 	}
-	if err := f.Close(); err != nil {
-		return err
-	}
-	return nil
+	return f.Close()
 }
 
 // Save pixels in uint32 ARGB format to PNG with alpha.
