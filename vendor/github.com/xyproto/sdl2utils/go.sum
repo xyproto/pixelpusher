@@ -1,9 +1,6 @@
 github.com/fogleman/fauxgl v0.0.0-20190627205746-5ab08979c242/go.mod h1:7f7F8EvO8MWvDx9sIoloOfZBCKzlWuZV/h3TjpXOO3k=
-github.com/fogleman/fauxgl v0.0.0-20200818143847-27cddc103802 h1:5vdq0jOnV15v1NdZbAcU+dIJ22rFgwaieiFewPvnKCA=
 github.com/fogleman/fauxgl v0.0.0-20200818143847-27cddc103802/go.mod h1:7f7F8EvO8MWvDx9sIoloOfZBCKzlWuZV/h3TjpXOO3k=
-github.com/fogleman/simplify v0.0.0-20170216171241-d32f302d5046 h1:n3RPbpwXSFT0G8FYslzMUBDO09Ix8/dlqzvUkcJm4Jk=
 github.com/fogleman/simplify v0.0.0-20170216171241-d32f302d5046/go.mod h1:KDwyDqFmVUxUmo7tmqXtyaaJMdGon06y8BD2jmh84CQ=
-github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 h1:zYyBkD/k9seD2A7fsi6Oo2LfFZAehjjQMERAvZLEDnQ=
 github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646/go.mod h1:jpp1/29i3P1S/RLdc7JQKbRpFeM1dOBd8T9ki5s+AY8=
 github.com/veandco/go-sdl2 v0.4.0/go.mod h1:FB+kTpX9YTE+urhYiClnRzpOXbiWgaU3+5F2AB78DPg=
 github.com/veandco/go-sdl2 v0.4.8 h1:A26KeX6R1CGt/BQGEov6oxYmVGMMEWDVqTvK1tXvahE=
@@ -12,7 +9,6 @@ github.com/xyproto/multirender v0.0.0-20210812160008-b09d0e851269/go.mod h1:NuGN
 github.com/xyproto/pf v0.0.0-20181025124322-7074da227fa9/go.mod h1:gFY4ElmPdzIugLXkqXbHZ/5YPyMrApUTDXawHCj9KBI=
 github.com/xyproto/pf v0.1.0 h1:eRNs6hP2WyPWmf/XLM5GfWm5sEiKzSg0B8wXlN8Rl9I=
 github.com/xyproto/pf v0.1.0/go.mod h1:rtltCHXE42yF2p802kl3h6ILFdjrGAe+SCmKHFlBl9M=
+github.com/xyproto/pixelpusher v0.0.0-20210812161021-2b0152ae3a90 h1:GsvNvObU3y4CeiiQpoi+FOhGw3YKvhiy5iVgvVhg5zQ=
 github.com/xyproto/pixelpusher v0.0.0-20210812161021-2b0152ae3a90/go.mod h1:0AhWORbB8lGJlDaqQz1RmDmBnk32buv0CsUlKiNrFFI=
 github.com/xyproto/sdl2utils v0.0.0-20180825143422-1d41a661b4cb/go.mod h1:/SEUe3Ed5TBJ6kjWqEob0E49WFaAykUUx3WrlIEbl0g=
-github.com/xyproto/sdl2utils v0.0.2 h1:NVVSR+g69e5052lJa5gtijWym0WG+gt3SlhgmcRJm6Q=
-github.com/xyproto/sdl2utils v0.0.2/go.mod h1:Ht8y1WLQ3Y9peiQ9jsRvP0qdS5R6iYlvD0/SxMMfoqw=

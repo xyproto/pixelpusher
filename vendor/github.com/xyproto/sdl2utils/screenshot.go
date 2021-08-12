@@ -2,7 +2,7 @@ package sdl2utils
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/multirender"
+	"github.com/xyproto/pixelpusher"
 	"image"
 	"unsafe"
 )
@@ -26,7 +26,7 @@ func RendererToImage(renderer *sdl.Renderer) (*image.RGBA, error) {
 	}
 
 	// Convert the extracted pixel buffer to an image
-	return multirender.PixelsToImage(pixelBuffer, pitch), nil
+	return pixelpusher.PixelsToImage(pixelBuffer, pitch), nil
 }
 
 // Screenshot saves the contents of the given *sdl.Renderer to a PNG file.
@@ -36,5 +36,5 @@ func Screenshot(renderer *sdl.Renderer, filename string, overwrite bool) error {
 	if err != nil {
 		return err
 	}
-	return multirender.SaveImageToPNG(img, filename, overwrite)
+	return pixelpusher.SaveImageToPNG(img, filename, overwrite)
 }
