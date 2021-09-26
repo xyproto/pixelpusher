@@ -153,7 +153,7 @@ func run() int {
 		pixels      = make([]uint32, width*height)
 		pixelCopy   = make([]uint32, width*height)
 		event       sdl.Event
-		effect      bool
+		effect      = true
 		quit        bool
 		pause       bool
 		cameraAngle float32
