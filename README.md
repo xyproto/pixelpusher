@@ -196,6 +196,6 @@ func main() {
 
 # General information
 
-* Version: 1.0.0
+* Version: 1.0.1
 * License: 3-clause BSD
 * Author: Alexander F. Rødseth &lt;rodseth@gmail.com&gt;
