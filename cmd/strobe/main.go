@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/pf"
+	"github.com/xyproto/pixelpusher"
 	"github.com/xyproto/sdl2utils"
 )
 
@@ -37,7 +37,6 @@ var (
 	// Convenience function for returning a random byte
 	rb = func() uint8 { return uint8(rand.Intn(255)) }
 )
-
 
 func Strobe(pixels []uint32, width, height, pitch int32) {
 	for y := int32(1); y < int32(height-1); y++ {
