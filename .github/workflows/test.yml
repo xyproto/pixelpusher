@@ -10,10 +10,10 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - name install_dependencies
-      run: |
-        sudo apt-get update -y -qq
-        sudo apt-get install libsdl2-dev
+    - name Update dependencies
+      run: sudo apt-get update -y -qq
+    - name: Install SDL2
+      run: sudo apt-get install libsdl2-dev
     - name: Install Go
       uses: actions/setup-go@v2
       with:
