@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/xyproto/pixelpusher/workflows/Build/badge.svg)
 [![GoDoc](https://godoc.org/github.com/xyproto/pixelpusher?status.svg)](http://godoc.org/github.com/xyproto/pixelpusher)
-[![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/xyproto/pixelpusher/master/LICENSE)
+[![License](https://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/o/main/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/pixelpusher)](https://goreportcard.com/report/github.com/xyproto/pixelpusher)
 
 Fast concurrent software rendering, triangle rasterization and pixel buffer manipulation.
@@ -196,6 +196,6 @@ func main() {
 
 # General information
 
-* License: BSD
-* Version: 0.1.0
+* Version: 1.0.0
+* License: 3-clause BSD
 * Author: Alexander F. Rødseth &lt;rodseth@gmail.com&gt;
