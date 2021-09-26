@@ -55,7 +55,7 @@ func DrawAll(pixels []uint32, cores int, mesh *fauxgl.Mesh, cameraAngle float32,
 
 func run() int {
 
-	sdl.Init(sdl.INIT_VIDEO)
+	sdl.Init(uint32(sdl.INIT_VIDEO))
 	defer sdl.Quit()
 
 	var (

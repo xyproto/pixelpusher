@@ -38,17 +38,16 @@ var (
 	rb = func() uint8 { return uint8(rand.Intn(255)) }
 )
 
-// DrawAll fills the pixel buffer with pixels.
+// DrawAll fills the pixel buffer with pixels, concurrently.
 // "cores" is how many CPU cores should be targeted when drawing triangles,
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int) {
-	// Draw a triangle, concurrently
 	pixelpusher.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 }
 
 func run() int {
 
-	sdl.Init(sdl.INIT_VIDEO)
+	sdl.Init(uint32(sdl.INIT_VIDEO))
 	defer sdl.Quit()
 
 	var (
@@ -88,11 +87,6 @@ func run() int {
 		pause   bool
 		nodelay bool
 	)
-
-	// Fill the pixel buffer with opaque color #808080
-	//for i := range pixels {
-	//	pixels[i] = 0xff808080
-	//}
 
 	// Innerloop
 	for !quit {
