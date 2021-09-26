@@ -33,22 +33,13 @@ const (
 	opaque = 255
 )
 
-// rb returns a random byte
-func rb() uint8 {
-	return uint8(rand.Intn(255))
-}
+var (
+	// Convenience function for returning a random byte
+	rb = func() uint8 { return uint8(rand.Intn(255)) }
+)
 
-// rw returns a random int32 in the range [0,width)
-func rw() int32 {
-	return rand.Int31n(width)
-}
 
-// rh returns a random int32 in the range [0,height)
-func rh() int32 {
-	return rand.Int31n(height)
-}
-
-func Trippy(pixels []uint32, width, height, pitch int32) {
+func Strobe(pixels []uint32, width, height, pitch int32) {
 	for y := int32(1); y < int32(height-1); y++ {
 		for x := int32(1); x < int32(width-1); x++ {
 			left := pixels[y*pitch+x-1]
@@ -200,7 +191,7 @@ func run() int {
 		err      error
 	)
 
-	window, err = sdl.CreateWindow("Trippy Triangles", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
+	window, err = sdl.CreateWindow("Strobing Triangles", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(width*pixelscale), int32(height*pixelscale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create window: %s\n", err)
 		return 1

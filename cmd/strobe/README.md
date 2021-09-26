@@ -1,4 +1,4 @@
-# Trippy Triangles
+# Strobing Triangles
 
 ## Keys
 
@@ -8,4 +8,3 @@
 * p                 - pause
 * q or esc          - quit
 * r                 - record a series of .png files
-

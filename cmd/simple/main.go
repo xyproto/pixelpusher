@@ -1,3 +1,4 @@
+// Used as an example in the README.md file
 package main
 
 import (
@@ -31,20 +32,12 @@ const (
 	opaque = 255
 )
 
-// rb returns a random byte
-func rb() uint8 {
-	return uint8(rand.Intn(255))
-}
-
-// rw returns a random int32 in the range [0,width)
-func rw() int32 {
-	return rand.Int31n(width)
-}
-
-// rh returns a random int32 in the range [0,height)
-func rh() int32 {
-	return rand.Int31n(height)
-}
+var (
+	// Convenience functions for returning random numbers
+	rw = func() int32 { return rand.Int31n(width) }
+	rh = func() int32 { return rand.Int31n(height) }
+	rb = func() uint8 { return uint8(rand.Intn(255)) }
+)
 
 // DrawAll fills the pixel buffer with pixels.
 // "cores" is how many CPU cores should be targeted when drawing triangles,
@@ -56,13 +49,12 @@ func DrawAll(pixels []uint32, cores int) {
 
 	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
 	go pixelpusher.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{0xff, 0xff, 0, opaque}, pitch)
-	go pixelpusher.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0xff, 0xff, opaque}, pitch)
+	go pixelpusher.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0x0, 0x0, opaque}, pitch)
 }
 
 func run() int {
 
 	sdl.Init(sdl.INIT_VIDEO)
-	defer sdl.Quit()
 
 	var (
 		window   *sdl.Window

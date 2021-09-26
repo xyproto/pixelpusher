@@ -35,20 +35,12 @@ const (
 	opaque = 255
 )
 
-// rb returns a random byte
-func rb() uint8 {
-	return uint8(rand.Intn(255))
-}
-
-// rw returns a random int32 in the range [0,width)
-func rw() int32 {
-	return rand.Int31n(width)
-}
-
-// rh returns a random int32 in the range [0,height)
-func rh() int32 {
-	return rand.Int31n(height)
-}
+var (
+	// Convenience functions for returning random numbers
+	rw = func() int32 { return rand.Int31n(width) }
+	rh = func() int32 { return rand.Int31n(height) }
+	rb = func() uint8 { return uint8(rand.Intn(255)) }
+)
 
 // DrawAll fills the pixel buffer with pixels.
 // "cores" is how many CPU cores should be targeted when drawing triangles,
