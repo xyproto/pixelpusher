@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/xyproto/pixelpusher/workflows/Build/badge.svg)
 [![GoDoc](https://godoc.org/github.com/xyproto/pixelpusher?status.svg)](http://godoc.org/github.com/xyproto/pixelpusher)
-[![License](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/xyproto/pixelpusher/master/LICENSE)
+[![License](http://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/pixelpusher/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/pixelpusher)](https://goreportcard.com/report/github.com/xyproto/pixelpusher)
 
 Fast concurrent software rendering, triangle rasterization and pixel buffer manipulation.
