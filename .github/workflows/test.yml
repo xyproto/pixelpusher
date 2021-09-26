@@ -26,6 +26,10 @@ jobs:
   test-cache:
     runs-on: ubuntu-latest
     steps:
+    - name: Update dependencies
+      run: sudo apt-get update -y -qq
+    - name: Install SDL2
+      run: sudo apt-get install libsdl2-dev
     - name: Install Go
       uses: actions/setup-go@v2
       with:
