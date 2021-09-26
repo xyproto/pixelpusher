@@ -10,7 +10,7 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - name Update dependencies
+    - name: Update dependencies
       run: sudo apt-get update -y -qq
     - name: Install SDL2
       run: sudo apt-get install libsdl2-dev
