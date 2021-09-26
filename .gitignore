@@ -15,11 +15,11 @@
 cmd/*/*.png
 
 # Ignore screenshots
-cmd/triangles/triangles
 cmd/blending/blending
 cmd/butterfly/butterfly
-cmd/trippy/trippy
+cmd/strobe/strobe
 cmd/redpixel/redpixel
 cmd/wiretri/wiretri
 cmd/cube/cube
 cmd/glitchduck/glitchduck
+cmd/simple/simple
