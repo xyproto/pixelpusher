@@ -62,15 +62,17 @@ const (
     opaque = 255
 )
 
+var (
+    // Convenience functions for returning random numbers
+    rw = func() int32 { return rand.Int31n(width) }
+    rh = func() int32 { return rand.Int31n(height) }
+    rb = func() uint8 { return uint8(rand.Intn(255)) }
+)
+
 // DrawAll fills the pixel buffer with pixels.
 // "cores" is how many CPU cores should be targeted when drawing triangles,
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int) {
-
-    // Convenience functions for returning random numbers
-    rw := func() int32 { return rand.Int31n(width) }
-    rh := func() int32 { return rand.Int31n(height) }
-    rb := func() uint8 { return uint8(rand.Intn(255)) }
 
     // Draw a triangle, concurrently
     pixelpusher.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
@@ -82,7 +84,7 @@ func DrawAll(pixels []uint32, cores int) {
 
 func run() int {
 
-    sdl.Init(sdl.INIT_VIDEO)
+    sdl.Init(uint32(sdl.INIT_VIDEO))
 
     var (
         window   *sdl.Window
