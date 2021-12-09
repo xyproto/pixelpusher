@@ -5,7 +5,7 @@
 [![License](http://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/pixelpusher/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/pixelpusher)](https://goreportcard.com/report/github.com/xyproto/pixelpusher)
 
-Fast concurrent software rendering, triangle rasterization and pixel buffer manipulation.
+Concurrent software rendering, triangle rasterization and pixel buffer manipulation.
 
 ![screencap](img/screencap.gif) ![triangles](img/triangles.png)
 
