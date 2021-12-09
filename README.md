@@ -20,8 +20,6 @@ Fast concurrent software rendering, triangle rasterization and pixel buffer mani
 * Provides flat-shaded triangles.
 * Everything is drawn to a `[]uint32` pixel buffer (containing "red", "green", "blue" and "alpha").
 * Tested together with SDL2, but can be used with any graphics library that can output pixels from a pixel buffer.
-* Everything you need for creating an oldschool game or demoscene demo that will run on Linux, macOS and Windows, while using all of the cores.
-* Does not support palette cycling, yet.
 * The software rendering of 3D graphics in the screenshot above is provided by [fauxgl](https://github.com/fogleman/fauxgl). The outputs from this can be combined with effects from `pixelpusher`.
 
 Requires Go 1.3 or later, and SDL2.
