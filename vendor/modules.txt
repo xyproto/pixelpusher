@@ -6,12 +6,13 @@ github.com/fogleman/simplify
 # github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 ## explicit
 github.com/nfnt/resize
-# github.com/veandco/go-sdl2 v0.4.10
+# github.com/veandco/go-sdl2 v0.4.36
 ## explicit
+github.com/veandco/go-sdl2/_libs
 github.com/veandco/go-sdl2/sdl
 # github.com/xyproto/pf v0.1.0
 ## explicit
 github.com/xyproto/pf
-# github.com/xyproto/sdl2utils v0.0.2
+# github.com/xyproto/sdl2utils v0.0.3
 ## explicit
 github.com/xyproto/sdl2utils

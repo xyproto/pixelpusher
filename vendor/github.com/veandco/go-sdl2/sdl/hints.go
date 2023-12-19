@@ -4,8 +4,18 @@ package sdl
 #include "sdl_wrapper.h"
 #include "hints.h"
 
+#if !(SDL_VERSION_ATLEAST(2,0,20))
+#define SDL_HINT_RENDER_LINE_METHOD ""
+#endif
+
+#if !(SDL_VERSION_ATLEAST(2,0,18))
+#define SDL_HINT_APP_NAME ""
+#endif
+
 #if !(SDL_VERSION_ATLEAST(2,0,16))
 #define SDL_HINT_JOYSTICK_RAWINPUT_CORRELATE_XINPUT ""
+#define SDL_HINT_AUDIO_INCLUDE_MONITORS ""
+#define SDL_HINT_AUDIO_DEVICE_STREAM_ROLE ""
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,14))
@@ -35,6 +45,7 @@ package sdl
 #if !(SDL_VERSION_ATLEAST(2,0,9))
 #define SDL_HINT_MOUSE_DOUBLE_CLICK_TIME ""
 #define SDL_HINT_MOUSE_DOUBLE_CLICK_RADIUS ""
+#define SDL_HINT_JOYSTICK_HIDAPI_STEAM ""
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,8))
@@ -93,11 +104,21 @@ package sdl
 #endif
 
 #if !(SDL_VERSION_ATLEAST(2,0,10))
+
+#if defined(WARN_OUTDATED)
+#pragma message("SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH has been removed in SDL 2.0.10")
+#endif
+
 #define SDL_HINT_RENDER_BATCHING ""
 #define SDL_HINT_EVENT_LOGGING ""
 #define SDL_HINT_GAMECONTROLLERCONFIG_FILE ""
 #define SDL_HINT_ANDROID_BLOCK_ON_PAUSE ""
 #define SDL_HINT_MOUSE_TOUCH_EVENTS ""
+
+#else
+
+#define SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH "" // For compatibility
+
 #endif
 
 #if SDL_VERSION_ATLEAST(2,0,16)
@@ -110,13 +131,27 @@ package sdl
 
 #endif
 
-#if SDL_VERSION_ATLEAST(2,0,10)
+#if !SDL_VERSION_ATLEAST(2,0,18)
 
-#if defined(WARN_OUTDATED)
-#pragma message("SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH has been removed in SDL 2.0.10")
+#define SDL_HINT_IME_SHOW_UI ""
+#define SDL_HINT_JOYSTICK_DEVICE ""
+#define SDL_HINT_LINUX_JOYSTICK_CLASSIC ""
+#define SDL_HINT_SCREENSAVER_INHIBIT_ACTIVITY_NAME ""
+#define SDL_HINT_VIDEO_EGL_ALLOW_TRANSPARENCY ""
+
 #endif
 
-#define SDL_HINT_ANDROID_SEPARATE_MOUSE_AND_TOUCH "" // For compatibility
+#if !SDL_VERSION_ATLEAST(2,0,22)
+
+#define SDL_HINT_IME_SUPPORT_EXTENDED_TEXT ""
+#define SDL_HINT_MOUSE_RELATIVE_MODE_CENTER ""
+#define SDL_HINT_MOUSE_AUTO_CAPTURE ""
+#define SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL ""
+#define SDL_HINT_VIDEO_FOREIGN_WINDOW_VULKAN ""
+#define SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE ""
+#define SDL_HINT_JOYSTICK_ROG_CHAKRAM ""
+#define SDL_HINT_X11_WINDOW_TYPE ""
+#define SDL_HINT_VIDEO_WAYLAND_PREFER_LIBDECOR ""
 
 #endif
 */
@@ -206,6 +241,25 @@ const (
 	HINT_THREAD_FORCE_REALTIME_TIME_CRITICAL      = C.SDL_HINT_THREAD_FORCE_REALTIME_TIME_CRITICAL      // Specifies whether SDL_THREAD_PRIORITY_TIME_CRITICAL should be treated as realtime.
 	HINT_ANDROID_BLOCK_ON_PAUSE_PAUSEAUDIO        = C.SDL_HINT_ANDROID_BLOCK_ON_PAUSE_PAUSEAUDIO        // A variable to control whether SDL will pause audio in background (Requires SDL_ANDROID_BLOCK_ON_PAUSE as "Non blocking").
 	HINT_EMSCRIPTEN_ASYNCIFY                      = C.SDL_HINT_EMSCRIPTEN_ASYNCIFY                      // Disable giving back control to the browser automatically when running with asyncify.
+	HINT_AUDIO_INCLUDE_MONITORS                   = C.SDL_HINT_AUDIO_INCLUDE_MONITORS                   // Control whether PulseAudio recording should include monitor devices
+	HINT_AUDIO_DEVICE_STREAM_ROLE                 = C.SDL_HINT_AUDIO_DEVICE_STREAM_ROLE                 // Describe the role of your application for audio control panels
+	HINT_APP_NAME                                 = C.SDL_HINT_APP_NAME                                 // Lets you specify the application name sent to the OS when required
+	HINT_VIDEO_EGL_ALLOW_TRANSPARENCY             = C.SDL_HINT_VIDEO_EGL_ALLOW_TRANSPARENCY             // A variable controlling whether the EGL window is allowed to be composited as transparent, rather than opaque
+	HINT_IME_SHOW_UI                              = C.SDL_HINT_IME_SHOW_UI                              // A variable to control whether certain IMEs should show native UI components (such as the Candidate List) instead of suppressing them
+	HINT_IME_SUPPORT_EXTENDED_TEXT                = C.SDL_HINT_IME_SUPPORT_EXTENDED_TEXT                // A variable to control if extended IME text support is enabled.
+	HINT_SCREENSAVER_INHIBIT_ACTIVITY_NAME        = C.SDL_HINT_SCREENSAVER_INHIBIT_ACTIVITY_NAME        // This hint lets you specify the "activity name" sent to the OS when SDL_DisableScreenSaver() is used (or the screensaver is automatically disabled)
+	HINT_LINUX_JOYSTICK_CLASSIC                   = C.SDL_HINT_LINUX_JOYSTICK_CLASSIC                   // A variable controlling whether to use the classic /dev/input/js* joystick interface or the newer /dev/input/event* joystick interface on Linux
+	HINT_JOYSTICK_DEVICE                          = C.SDL_HINT_JOYSTICK_DEVICE                          // This variable is currently only used by the Linux joystick driver
+	HINT_JOYSTICK_HIDAPI_STEAM                    = C.SDL_HINT_JOYSTICK_HIDAPI_STEAM                    // A variable controlling whether the HIDAPI driver for Steam Controllers should be used
+	HINT_RENDER_LINE_METHOD                       = C.SDL_HINT_RENDER_LINE_METHOD                       // A variable controlling how the 2D render API renders lines
+        HINT_MOUSE_RELATIVE_MODE_CENTER               = C.SDL_HINT_MOUSE_RELATIVE_MODE_CENTER               // A variable controlling whether relative mouse mode constrains the mouse to the center of the window
+        HINT_MOUSE_AUTO_CAPTURE                       = C.SDL_HINT_MOUSE_AUTO_CAPTURE                       // A variable controlling whether the mouse is captured while mouse buttons are pressed
+        HINT_VIDEO_FOREIGN_WINDOW_OPENGL              = C.SDL_HINT_VIDEO_FOREIGN_WINDOW_OPENGL              // When calling SDL_CreateWindowFrom(), make the window compatible with OpenGL
+        HINT_VIDEO_FOREIGN_WINDOW_VULKAN              = C.SDL_HINT_VIDEO_FOREIGN_WINDOW_VULKAN              // When calling SDL_CreateWindowFrom(), make the window compatible with Vulkan
+	HINT_QUIT_ON_LAST_WINDOW_CLOSE                = C.SDL_HINT_QUIT_ON_LAST_WINDOW_CLOSE                // A variable that decides whether to send SDL_QUIT when closing the final window
+        HINT_JOYSTICK_ROG_CHAKRAM                     = C.SDL_HINT_JOYSTICK_ROG_CHAKRAM                     // A variable controlling whether the ROG Chakram mice should show up as joysticks
+        HINT_X11_WINDOW_TYPE                          = C.SDL_HINT_X11_WINDOW_TYPE                          // A variable that forces X11 windows to create as a custom type
+        HINT_VIDEO_WAYLAND_PREFER_LIBDECOR            = C.SDL_HINT_VIDEO_WAYLAND_PREFER_LIBDECOR            // A variable controlling whether the libdecor Wayland backend is preferred over native decrations
 )
 
 // An enumeration of hint priorities.
