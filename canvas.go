@@ -1,6 +1,7 @@
 package pixelpusher
 
 import (
+	"errors"
 	"fmt"
 	"image/color"
 
@@ -27,6 +28,8 @@ type ActionFunction func(bool, bool, bool, bool, bool, bool, bool) error
 
 // TickFunction is called at every loop
 type TickFunction func() error
+
+var errQuit = errors.New("quit")
 
 // New creates a new Canvas
 func New(title string) *Canvas {
@@ -89,17 +92,19 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 
 	var (
 		event                     sdl.Event
-		pause, recording, quit    bool
+		pause, recording          bool
 		loopCounter, frameCounter uint64
 	)
 
 	// Innerloop
-	for !quit {
+	for {
 
 		if !pause {
 
 			if drawFunc != nil {
-				drawFunc(c)
+				if err := drawFunc(c); err != nil {
+					return err
+				}
 			}
 
 			texture.UpdateRGBA(nil, c.Pixels, int(c.Pitch))
@@ -119,7 +124,7 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 		for event = sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
-				quit = true
+				return errQuit
 			case *sdl.KeyboardEvent:
 				ke := event.(*sdl.KeyboardEvent)
 
@@ -128,43 +133,58 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 					switch ks.Sym {
 					case sdl.K_ESCAPE, sdl.K_q:
 						// quit
-						if pressFunc == nil || pressFunc(false, false, false, false, false, false, true) != nil {
-							quit = true
+						if pressFunc == nil {
+							return errQuit
+						} else if err := pressFunc(false, false, false, false, false, false, true); err != nil {
+							return err
 						}
 					case sdl.K_SPACE:
 						// fire
-						if pressFunc != nil && pressFunc(false, false, false, false, true, false, false) != nil {
-							quit = true
+						if pressFunc != nil {
+							if err := pressFunc(false, false, false, false, true, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_LEFT, sdl.K_a:
 						// left
-						if pressFunc != nil && pressFunc(true, false, false, false, false, false, false) != nil {
-							quit = true
+						if pressFunc != nil {
+							if err := pressFunc(true, false, false, false, false, false, false); err != nil {
+								return err
+							}
 						}
+
 					case sdl.K_RIGHT, sdl.K_d:
 						// right
-						if pressFunc != nil && pressFunc(false, true, false, false, false, false, false) != nil {
-							quit = true
+						if pressFunc != nil {
+							if err := pressFunc(false, true, false, false, false, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_UP, sdl.K_w:
 						// up
-						if pressFunc != nil && pressFunc(false, false, true, false, false, false, false) != nil {
-							quit = true
+						if pressFunc != nil {
+							if err := pressFunc(false, false, true, false, false, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_DOWN:
 						// down
-						if pressFunc != nil && pressFunc(false, false, false, true, false, false, false) != nil {
-							quit = true
+						if pressFunc != nil {
+							if err := pressFunc(false, false, false, true, false, false, false); err != nil {
+								return err
+							}
 						}
-
 					case sdl.K_RETURN:
 						altHeldDown := ks.Mod == sdl.KMOD_LALT || ks.Mod == sdl.KMOD_RALT
 						if !altHeldDown {
 							// alt+enter is not pressed
 							// enter is pressed
-							if pressFunc != nil && pressFunc(false, false, false, false, false, true, false) != nil {
-								quit = true
+							if pressFunc != nil {
+								if err := pressFunc(false, false, false, false, false, true, false); err != nil {
+									return err
+								}
 							}
+
 							break
 						}
 						// alt+enter is pressed
@@ -179,8 +199,10 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 						if !ctrlHeldDown {
 							// ctrl+s is not pressed
 							// s is pressed
-							if pressFunc != nil && pressFunc(false, false, false, true, false, false, false) != nil {
-								quit = true
+							if pressFunc != nil {
+								if err := pressFunc(false, false, false, true, false, false, false); err != nil {
+									return err
+								}
 							}
 							break
 						}
@@ -199,48 +221,65 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 					switch ks.Sym {
 					case sdl.K_ESCAPE, sdl.K_q:
 						// quit
-						if releaseFunc == nil || releaseFunc(false, false, false, false, false, false, true) != nil {
-							quit = true
+						if releaseFunc == nil {
+							return errQuit
+						} else if err := releaseFunc(false, false, false, false, false, false, true); err != nil {
+							return err
 						}
 					case sdl.K_SPACE:
 						// fire
-						if releaseFunc != nil && releaseFunc(false, false, false, false, true, false, false) != nil {
-							quit = true
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, false, false, true, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_LEFT, sdl.K_a:
 						// left
-						if releaseFunc != nil && releaseFunc(true, false, false, false, false, false, false) != nil {
-							quit = true
+						if releaseFunc != nil {
+							if err := releaseFunc(true, false, false, false, false, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_RIGHT, sdl.K_d:
 						// right
-						if releaseFunc != nil && releaseFunc(false, true, false, false, false, false, false) != nil {
-							quit = true
+						if releaseFunc != nil {
+							if err := releaseFunc(false, true, false, false, false, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_UP, sdl.K_w:
 						// up
-						if releaseFunc != nil && releaseFunc(false, false, true, false, false, false, false) != nil {
-							quit = true
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, true, false, false, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_DOWN, sdl.K_s:
 						// down
-						if releaseFunc != nil && releaseFunc(false, false, false, true, false, false, false) != nil {
-							quit = true
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, false, true, false, false, false); err != nil {
+								return err
+							}
 						}
 					case sdl.K_RETURN:
-						if releaseFunc != nil && releaseFunc(false, false, false, false, false, true, false) != nil {
-							quit = true
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, false, false, false, true, false); err != nil {
+								return err
+							}
 						}
 					}
 				}
 			}
 		}
+
+		if tickFunc != nil {
+			if err := tickFunc(); err != nil {
+				return err
+			}
+		}
+
 		sdl.Delay(uint32(1000 / c.FrameRate))
 		loopCounter++
-
-		if tickFunc != nil && tickFunc() != nil {
-			quit = true
-		}
 	}
 	return nil
 }
