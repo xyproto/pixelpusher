@@ -29,18 +29,19 @@ This program imports `pixelpusher`, sets up a callback function for drawing pixe
 package main
 
 import (
-    "github.com/xyproto/pixelpusher"
+    pp "github.com/xyproto/pixelpusher"
 )
 
-func onDraw(gfx *pixelpusher.Config) error {
+func onDraw(canvas *pp.Canvas) error {
     // x=0, y=0, red=255, green=0, blue=0
-    return pixelpusher.Plot(gfx, 0, 0, 255, 0, 0)
+    return pp.Plot(canvas, 0, 0, 255, 0, 0)
 }
 
 func main() {
     // The window title is "Red Pixel"
-    gfx := pixelpusher.New("Red Pixel")
-    gfx.Run(onDraw, nil, nil, nil)
+    canvas := pp.New("Red Pixel")
+    // onDraw will be called whenever it is time to draw a frame
+    canvas.Run(onDraw, nil, nil, nil)
 }
 ```
 
@@ -52,13 +53,13 @@ package main
 import (
     "errors"
 
-    "github.com/xyproto/pixelpusher"
+    pp "github.com/xyproto/pixelpusher"
 )
 
 var x, y = 160, 100
 
-func onDraw(gfx *pixelpusher.Config) error {
-    return pixelpusher.Plot(gfx, x, y, 255, 0, 0)
+func onDraw(canvas *pp.Canvas) error {
+    return pp.Plot(canvas, x, y, 255, 0, 0)
 }
 
 func onPress(left, right, up, down, space, enter, esc bool) error {
@@ -79,12 +80,12 @@ func onPress(left, right, up, down, space, enter, esc bool) error {
 }
 
 func main() {
-    pixelpusher.New("Simple Draw").Run(onDraw, onPress, nil, nil)
+    pp.New("Simple Draw").Run(onDraw, onPress, nil, nil)
 }
 ```
 
 # General information
 
-* Version: 1.1.0
+* Version: 1.2.0
 * License: BSD-3
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
