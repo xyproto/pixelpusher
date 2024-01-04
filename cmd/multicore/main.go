@@ -1,4 +1,3 @@
-// Used as an example in the README.md file
 package main
 
 import (
@@ -9,7 +8,7 @@ import (
 	"runtime"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/pixelpusher"
+	pp "github.com/xyproto/pixelpusher"
 )
 
 const (
@@ -43,11 +42,11 @@ var (
 func DrawAll(pixels []uint32, cores int) {
 
 	// Draw a triangle, concurrently
-	pixelpusher.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	pp.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 
 	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
-	go pixelpusher.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{0xff, 0xff, 0, opaque}, pitch)
-	go pixelpusher.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0x0, 0x0, opaque}, pitch)
+	go pp.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{0xff, 0xff, 0, opaque}, pitch)
+	go pp.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0x0, 0x0, opaque}, pitch)
 }
 
 func run() int {
@@ -133,7 +132,7 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						pixelpusher.ToggleFullscreen(window)
+						pp.ToggleFullscreen(window)
 					case sdl.K_SPACE, sdl.K_p:
 						pause = !pause
 					case sdl.K_s:
@@ -146,7 +145,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// screenshot
-						pixelpusher.Screenshot(renderer, "screenshot.png", true)
+						pp.Screenshot(renderer, "screenshot.png", true)
 					}
 				}
 			}

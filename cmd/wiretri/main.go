@@ -6,10 +6,9 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/pixelpusher"
+	pp "github.com/xyproto/pixelpusher"
 )
 
 const (
@@ -41,7 +40,7 @@ var (
 // "cores" is how many CPU cores should be targeted when drawing triangles,
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int) {
-	pixelpusher.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	pp.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 }
 
 func run() int {
@@ -75,8 +74,6 @@ func run() int {
 	}
 
 	//texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
-
-	rand.Seed(time.Now().UnixNano())
 
 	var (
 		pixels  = make([]uint32, width*height)
@@ -124,7 +121,7 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						pixelpusher.ToggleFullscreen(window)
+						pp.ToggleFullscreen(window)
 					case sdl.K_SPACE:
 						nodelay = !nodelay
 					case sdl.K_p:
@@ -139,7 +136,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// save the image
-						pixelpusher.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
+						pp.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
 					}
 				}
 			}

@@ -6,11 +6,10 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/fogleman/fauxgl"
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/pixelpusher"
+	pp "github.com/xyproto/pixelpusher"
 )
 
 const (
@@ -46,7 +45,7 @@ var (
 // by launching the same number of goroutines.
 func DrawAll(pixels []uint32, cores int, mesh *fauxgl.Mesh, cameraAngle float32, meshHexColor string) {
 	// Draw a triangle, concurrently
-	pixelpusher.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
+	pp.WireTriangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaque}, pitch)
 
 	// Draw a 3D object on top
 	DrawMesh(pixels, pitch, mesh, cameraAngle, meshHexColor)
@@ -83,8 +82,6 @@ func run() int {
 	}
 
 	//texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
-
-	rand.Seed(time.Now().UnixNano())
 
 	mesh, err := LoadMeshOBJ("bevelcube.obj")
 	if err != nil {
@@ -143,7 +140,7 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						pixelpusher.ToggleFullscreen(window)
+						pp.ToggleFullscreen(window)
 					case sdl.K_SPACE, sdl.K_p:
 						pause = !pause
 					case sdl.K_s:
@@ -156,7 +153,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// save the image
-						pixelpusher.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
+						pp.SavePixelsToPNG(pixels, pitch, "screenshot.png", true)
 					}
 				}
 			}

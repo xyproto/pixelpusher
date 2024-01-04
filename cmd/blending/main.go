@@ -6,10 +6,9 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/xyproto/pixelpusher"
+	pp "github.com/xyproto/pixelpusher"
 )
 
 const (
@@ -45,11 +44,11 @@ func DrawAll(pixels []uint32, cores int) {
 	var opaqueness uint8 = 1 // Almost completely transparent
 
 	// Draw a triangle, concurrently
-	pixelpusher.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
+	pp.Triangle(cores, pixels, rw(), rh(), rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
 
 	// Draw a line and a red pixel, without caring about which order they appear in, or if they will complete before the next frame is drawn
-	go pixelpusher.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
-	go pixelpusher.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0, 0, opaqueness}, pitch)
+	go pp.Line(pixels, rw(), rh(), rw(), rh(), color.RGBA{rb(), rb(), rb(), opaqueness}, pitch)
+	go pp.Pixel(pixels, rw(), rh(), color.RGBA{0xff, 0, 0, opaqueness}, pitch)
 }
 
 func run() int {
@@ -88,8 +87,6 @@ func run() int {
 	}
 
 	texture.SetBlendMode(sdl.BLENDMODE_ADD)
-
-	rand.Seed(time.Now().UnixNano())
 
 	var (
 		pixels = make([]uint32, width*height)
@@ -136,7 +133,7 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						pixelpusher.ToggleFullscreen(window)
+						pp.ToggleFullscreen(window)
 						// Clear pixels at fullscreen toggle, because of blend mode and no double buffering
 						renderer.Clear()
 						for i := range pixels {
@@ -155,7 +152,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// screenshot
-						pixelpusher.Screenshot(renderer, "screenshot.png", true)
+						pp.Screenshot(renderer, "screenshot.png", true)
 					}
 				}
 			}

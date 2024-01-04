@@ -7,11 +7,10 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/pf"
-	"github.com/xyproto/pixelpusher"
+	pp "github.com/xyproto/pixelpusher"
 )
 
 const (
@@ -32,10 +31,8 @@ const (
 	opaque = 255
 )
 
-var (
-	// Convenience function for returning a random byte
-	rb = func() uint8 { return uint8(rand.Intn(255)) }
-)
+// Convenience function for returning a random byte
+func rb() uint8 { return uint8(rand.Intn(255)) }
 
 func Strobe(pixels []uint32, width, height, pitch int32) {
 	for y := int32(1); y < int32(height-1); y++ {
@@ -68,52 +65,52 @@ func Convolution(time float32, pixels []uint32, width, height, pitch int32, enr 
 			switch enr {
 			case 0:
 				// "snow patterns"
-				left = pixelpusher.GetWrap(pixels, y*pitch+x-1, size)
-				right = pixelpusher.GetWrap(pixels, y*pitch+x+1, size)
-				this = pixelpusher.GetWrap(pixels, y*pitch+x, size)
-				above = pixelpusher.GetWrap(pixels, (y+1)*pitch+x, size)
+				left = pp.GetWrap(pixels, y*pitch+x-1, size)
+				right = pp.GetWrap(pixels, y*pitch+x+1, size)
+				this = pp.GetWrap(pixels, y*pitch+x, size)
+				above = pp.GetWrap(pixels, (y+1)*pitch+x, size)
 			case 1:
 				// "highway"
-				left = pixelpusher.GetWrap(pixels, (y-1)*pitch+x-1, size)
-				right = pixelpusher.GetWrap(pixels, (y-1)*pitch+x+1, size)
-				this = pixelpusher.GetWrap(pixels, y*pitch+x, size)
-				above = pixelpusher.GetWrap(pixels, (y-1)*pitch+x, size)
+				left = pp.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = pp.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = pp.GetWrap(pixels, y*pitch+x, size)
+				above = pp.GetWrap(pixels, (y-1)*pitch+x, size)
 			case 2:
 				// "dither highway"
-				left = pixelpusher.GetWrap(pixels, (y-1)*pitch+x-1, size)
-				right = pixelpusher.GetWrap(pixels, (y-1)*pitch+x+1, size)
-				this = pixelpusher.GetWrap(pixels, (y-1)*pitch+(x-1), size)
-				above = pixelpusher.GetWrap(pixels, (y+1)*pitch+(x+1), size)
+				left = pp.GetWrap(pixels, (y-1)*pitch+x-1, size)
+				right = pp.GetWrap(pixels, (y-1)*pitch+x+1, size)
+				this = pp.GetWrap(pixels, (y-1)*pitch+(x-1), size)
+				above = pp.GetWrap(pixels, (y+1)*pitch+(x+1), size)
 			case 3:
 				// "butterfly"
-				left = pixelpusher.GetWrap(pixels, y*pitch+(x-two1), size)
-				right = pixelpusher.GetWrap(pixels, y*pitch+(x+two1), size)
-				this = pixelpusher.GetWrap(pixels, y*pitch+x*two2, size)
-				above = pixelpusher.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
+				left = pp.GetWrap(pixels, y*pitch+(x-two1), size)
+				right = pp.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = pp.GetWrap(pixels, y*pitch+x*two2, size)
+				above = pp.GetWrap(pixels, (y-two1)*pitch+x*two2, size)
 			case 4:
 				// ?
-				left = pixelpusher.GetWrap(pixels, y*pitch+(x-two2), size)
-				right = pixelpusher.GetWrap(pixels, y*pitch+(x+two1), size)
-				this = pixelpusher.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
-				above = pixelpusher.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
+				left = pp.GetWrap(pixels, y*pitch+(x-two2), size)
+				right = pp.GetWrap(pixels, y*pitch+(x+two1), size)
+				this = pp.GetWrap(pixels, y*pitch+int32(float32(x)*stime), size)
+				above = pp.GetWrap(pixels, (y-two2)*pitch+int32(float32(x)*stime), size)
 			case 5:
 				// "castle"
-				left = pixelpusher.GetWrap(pixels, y*pitch+(x-one1), size)
-				right = pixelpusher.GetWrap(pixels, y*pitch+(x+one1), size)
-				this = pixelpusher.GetWrap(pixels, y*pitch+x*two1, size)
-				above = pixelpusher.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
+				left = pp.GetWrap(pixels, y*pitch+(x-one1), size)
+				right = pp.GetWrap(pixels, y*pitch+(x+one1), size)
+				this = pp.GetWrap(pixels, y*pitch+x*two1, size)
+				above = pp.GetWrap(pixels, (y-one2)*pitch+x*two1, size)
 			}
 
-			lr, lg, lb, _ := pixelpusher.ColorValueToRGBA(left)
-			rr, rg, rb, _ := pixelpusher.ColorValueToRGBA(right)
-			tr, tg, tb, _ := pixelpusher.ColorValueToRGBA(this)
-			ar, ag, ab, _ := pixelpusher.ColorValueToRGBA(above)
+			lr, lg, lb, _ := pp.ColorValueToRGBA(left)
+			rr, rg, rb, _ := pp.ColorValueToRGBA(right)
+			tr, tg, tb, _ := pp.ColorValueToRGBA(this)
+			ar, ag, ab, _ := pp.ColorValueToRGBA(above)
 
 			averageR := uint8(float32(lr+rr+tr+ar) / float32(4.8-stime))
 			averageG := uint8(float32(lg+rg+tg+ag) / float32(4.8-stime))
 			averageB := uint8(float32(lb+rb+tb+ab) / float32(4.8-stime))
 
-			pixelpusher.SetWrap(pixels, y*pitch+x, width*height, pixelpusher.RGBAToColorValue(averageR, averageG, averageB, 0xff))
+			pp.SetWrap(pixels, y*pitch+x, width*height, pp.RGBAToColorValue(averageR, averageG, averageB, 0xff))
 		}
 	}
 }
@@ -138,24 +135,24 @@ func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitc
 
 	// The function is responsible for clearing the pixels,
 	// it might want to reuse the pixels from the last time (flame effect)
-	//pixelpusher.FastClear(pixels, bgColorValue)
+	//pp.FastClear(pixels, bgColorValue)
 
 	// Find a suitable placement and color
 	var x int32
 	if xdirection > 0 {
-		x = pixelpusher.Clamp(int32(float32(width)*time), size, width-size)
+		x = pp.Clamp(int32(float32(width)*time), size, width-size)
 	} else if xdirection == 0 {
 		x = int32(width / 2)
 	} else {
-		x = pixelpusher.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
+		x = pp.Clamp(int32(float32(width)*(1.0-time)), size, width-size)
 	}
 	var y int32
 	if ydirection > 0 {
-		y = pixelpusher.Clamp(int32(float32(height)*time), size, height-size)
+		y = pp.Clamp(int32(float32(height)*time), size, height-size)
 	} else if ydirection == 0 {
 		y = int32(height / 2)
 	} else {
-		y = pixelpusher.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
+		y = pp.Clamp(int32(float32(height)*(1.0-time)), size, height-size)
 	}
 
 	// Make the center triangle red
@@ -173,7 +170,7 @@ func TriangleDance(cores int, time float32, pixels []uint32, width, height, pitc
 	x3 := x + rand.Int31n(int32(size)) - int32(size/2)
 	y3 := y + rand.Int31n(int32(size)) - int32(size/2)
 
-	pixelpusher.Triangle(cores, pixels, x1, y1, x2, y2, x3, y3, c, pitch)
+	pp.Triangle(cores, pixels, x1, y1, x2, y2, x3, y3, c, pitch)
 
 	return 0.0
 }
@@ -212,8 +209,6 @@ func run() int {
 		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
 		return 1
 	}
-
-	rand.Seed(time.Now().UnixNano())
 
 	var (
 		pixels    = make([]uint32, width*height)
@@ -294,9 +289,9 @@ func run() int {
 
 			// Stretch the contrast on a copy of the pixels
 			if glitch {
-				pixelpusher.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
+				pp.GlitchyStretchContrast(cores, pixelCopy, pitch, cycleTime)
 			} else {
-				pixelpusher.StretchContrast(cores, pixelCopy, pitch, cycleTime)
+				pp.StretchContrast(cores, pixelCopy, pitch, cycleTime)
 			}
 			texture.UpdateRGBA(nil, pixelCopy, pitch)
 
@@ -305,7 +300,7 @@ func run() int {
 
 			if recording {
 				filename := fmt.Sprintf("frame%05d.png", frameCounter)
-				pixelpusher.SavePixelsToPNG(pixelCopy, pitch, filename, true)
+				pp.SavePixelsToPNG(pixelCopy, pitch, filename, true)
 				frameCounter++
 			}
 
@@ -334,7 +329,7 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						pixelpusher.ToggleFullscreen(window)
+						pp.ToggleFullscreen(window)
 					case sdl.K_p:
 						// pause toggle
 						pause = !pause
@@ -351,7 +346,7 @@ func run() int {
 						glitch = !glitch
 					case sdl.K_F12:
 						// screenshot
-						pixelpusher.Screenshot(renderer, "screenshot.png", true)
+						pp.Screenshot(renderer, "screenshot.png", true)
 					case sdl.K_r:
 						// recording
 						recording = !recording
