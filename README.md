@@ -23,7 +23,7 @@ Concurrent software rendering, triangle rasterization and pixel buffer manipulat
 
 ## Getting started
 
-A single red pixel in the upper left corner:
+This simple program imports pixelpusher, sets up a callback function for drawing pixels to `gfx.Pixels`, creates a `pixelpusher.Config` struct and then calls the `.Run` function. The window title is `Red Pixel`:
 
 ```
 package main
@@ -33,7 +33,7 @@ import (
 )
 
 func onDraw(gfx *pixelpusher.Config) error {
-    // x, y, r, g, b
+    // x=0, y=0, red=255, green=0, blue=0
     return pixelpusher.Plot(gfx, 0, 0, 255, 0, 0)
 }
 
@@ -43,7 +43,7 @@ func main() {
 }
 ```
 
-A very simple drawing program:
+This program allows the user to press the arrow keys or the WASD keys to move a red pixel around and draw something. Press `ctrl-s` to save the image and press `Esc` or `q` to quit.
 
 ```go
 package main
