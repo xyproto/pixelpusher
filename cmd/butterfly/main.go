@@ -11,7 +11,6 @@ import (
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/pixelpusher"
-	"github.com/xyproto/sdl2utils"
 )
 
 const (
@@ -331,7 +330,7 @@ func run() int {
 						// alt+enter is pressed
 						fallthrough
 					case sdl.K_f, sdl.K_F11:
-						sdl2utils.ToggleFullscreen(window)
+						pixelpusher.ToggleFullscreen(window)
 					case sdl.K_p, sdl.K_SPACE:
 						// pause toggle
 						pause = !pause
@@ -345,7 +344,7 @@ func run() int {
 						fallthrough
 					case sdl.K_F12:
 						// screenshot
-						sdl2utils.Screenshot(renderer, "screenshot.png", true)
+						pixelpusher.Screenshot(renderer, "screenshot.png", true)
 					}
 				}
 			}
