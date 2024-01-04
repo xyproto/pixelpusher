@@ -38,6 +38,7 @@ func onDraw(gfx *pixelpusher.Config) error {
 }
 
 func main() {
+    // The window title is "Red Pixel"
     gfx := pixelpusher.New("Red Pixel")
     gfx.Run(onDraw, nil, nil, nil)
 }
