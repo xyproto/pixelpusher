@@ -7,7 +7,8 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-type Config struct {
+// Canvas is a window title + pixels + additional info
+type Canvas struct {
 	Title      string
 	PixelScale int
 	Width      int
@@ -18,16 +19,18 @@ type Config struct {
 	Pixels     []uint32
 }
 
-// DrawFunction can be used to draw pixels to Config.Pixels
-type DrawFunction func(*Config) error
+// DrawFunction can be used to draw pixels to canvas.Pixels
+type DrawFunction func(*Canvas) error
 
 // ActionFunction is called when keys are pressed or released. Order: left, right, up, down, space, return, esc
 type ActionFunction func(bool, bool, bool, bool, bool, bool, bool) error
 
+// TickFunction is called at every loop
 type TickFunction func() error
 
-func New(title string) *Config {
-	return &Config{
+// New creates a new Canvas
+func New(title string) *Canvas {
+	return &Canvas{
 		Title:      title, // window title
 		PixelScale: 4,     // size of "worldspace pixels" measured in "screenspace pixels"
 		Width:      320,   // width, worldspace
@@ -39,7 +42,8 @@ func New(title string) *Config {
 	}
 }
 
-func Plot(c *Config, x, y, r, g, b int) error {
+// Plot can plot a pixel to a canvas. It is a bit slow because it contains additional checks. Modify canvas.Pixels directly for better performance.
+func Plot(c *Canvas, x, y, r, g, b int) error {
 	if x < 0 || x >= c.Width {
 		return fmt.Errorf("x is out of range: %d", x)
 	}
@@ -50,7 +54,8 @@ func Plot(c *Config, x, y, r, g, b int) error {
 	return nil
 }
 
-func (c *Config) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFunc ActionFunction, tickFunc TickFunction) error {
+// Run takes an optional function draw drawing pixels, an optional function for when an action is pressed, an optional function for when an action is released and a function for each loop
+func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFunc ActionFunction, tickFunc TickFunction) error {
 
 	sdl.Init(uint32(sdl.INIT_VIDEO))
 	defer sdl.Quit()
@@ -123,7 +128,7 @@ func (c *Config) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 					switch ks.Sym {
 					case sdl.K_ESCAPE, sdl.K_q:
 						// quit
-						if pressFunc != nil && pressFunc(false, false, false, false, false, false, true) != nil {
+						if pressFunc == nil || pressFunc(false, false, false, false, false, false, true) != nil {
 							quit = true
 						}
 					case sdl.K_SPACE:
@@ -194,7 +199,7 @@ func (c *Config) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 					switch ks.Sym {
 					case sdl.K_ESCAPE, sdl.K_q:
 						// quit
-						if releaseFunc != nil && releaseFunc(false, false, false, false, false, false, true) != nil {
+						if releaseFunc == nil || releaseFunc(false, false, false, false, false, false, true) != nil {
 							quit = true
 						}
 					case sdl.K_SPACE:
@@ -232,6 +237,7 @@ func (c *Config) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 		}
 		sdl.Delay(uint32(1000 / c.FrameRate))
 		loopCounter++
+
 		if tickFunc != nil && tickFunc() != nil {
 			quit = true
 		}
