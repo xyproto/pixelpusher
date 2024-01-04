@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/xyproto/pixelpusher"
@@ -85,8 +84,6 @@ func run() int {
 	}
 
 	texture.SetBlendMode(sdl.BLENDMODE_BLEND) // sdl.BLENDMODE_ADD is also possible
-
-	rand.Seed(time.Now().UnixNano())
 
 	var (
 		pixels = make([]uint32, width*height)

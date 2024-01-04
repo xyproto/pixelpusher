@@ -3,13 +3,13 @@ package main
 import (
 	"errors"
 
-	"github.com/xyproto/pixelpusher"
+	pp "github.com/xyproto/pixelpusher"
 )
 
 var x, y = 160, 100
 
-func onDraw(gfx *pixelpusher.Config) error {
-	return pixelpusher.Plot(gfx, x, y, 255, 0, 0)
+func onDraw(canvas *pp.Canvas) error {
+	return pp.Plot(canvas, x, y, 255, 0, 0)
 }
 
 func onPress(left, right, up, down, space, enter, esc bool) error {
@@ -30,5 +30,5 @@ func onPress(left, right, up, down, space, enter, esc bool) error {
 }
 
 func main() {
-	pixelpusher.New("Simple Draw").Run(onDraw, onPress, nil, nil)
+	pp.New("Simple Draw").Run(onDraw, onPress, nil, nil)
 }
