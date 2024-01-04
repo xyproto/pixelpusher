@@ -24,3 +24,6 @@ cmd/simple/simple
 cmd/simpledraw/simpledraw
 cmd/strobe/strobe
 cmd/wiretri/wiretri
+
+.DS_Store
+include.txt
