@@ -14,12 +14,13 @@
 # Ignore generated images
 cmd/*/*.png
 
-# Ignore screenshots
 cmd/blending/blending
 cmd/butterfly/butterfly
-cmd/strobe/strobe
-cmd/redpixel/redpixel
-cmd/wiretri/wiretri
 cmd/cube/cube
 cmd/glitchduck/glitchduck
+cmd/multicore/multicore
+cmd/redpixel/redpixel
 cmd/simple/simple
+cmd/simpledraw/simpledraw
+cmd/strobe/strobe
+cmd/wiretri/wiretri
