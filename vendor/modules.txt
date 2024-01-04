@@ -8,9 +8,9 @@ github.com/fogleman/simplify
 ## explicit
 github.com/nfnt/resize
 # github.com/veandco/go-sdl2 v0.4.37
-## explicit
+## explicit; go 1.15
 github.com/veandco/go-sdl2/_libs
 github.com/veandco/go-sdl2/sdl
 # github.com/xyproto/pf v0.1.0
-## explicit
+## explicit; go 1.16
 github.com/xyproto/pf
