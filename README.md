@@ -23,9 +23,9 @@ Concurrent software rendering, triangle rasterization and pixel buffer manipulat
 
 ## Getting started
 
-This simple program imports pixelpusher, sets up a callback function for drawing pixels to `gfx.Pixels`, creates a `pixelpusher.Config` struct and then calls the `.Run` function. The window title is `Red Pixel`:
+This program imports `pixelpusher`, sets up a callback function for drawing pixels to the `gfx.Pixels` slice, creates a `pixelpusher.Config` struct and then calls the `.Run` function. The window title is `Red Pixel`:
 
-```
+```go
 package main
 
 import (
