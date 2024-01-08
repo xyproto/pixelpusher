@@ -59,22 +59,28 @@ func Plot(c *Canvas, x, y, r, g, b int) error {
 
 // Run takes an optional function draw drawing pixels, an optional function for when an action is pressed, an optional function for when an action is released and a function for each loop
 func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFunc ActionFunction, tickFunc TickFunction) error {
-
-	sdl.Init(uint32(sdl.INIT_VIDEO))
-	defer sdl.Quit()
-
 	var (
-		window   *sdl.Window
-		renderer *sdl.Renderer
-		err      error
+		window                    *sdl.Window
+		renderer                  *sdl.Renderer
+		event                     sdl.Event
+		joystick                  *sdl.Joystick
+		pause, recording          bool
+		loopCounter, frameCounter uint64
+		err                       error
 	)
 
+	// Initialize SDL (video + joystick)
+	sdl.Init(uint32(sdl.INIT_VIDEO) | uint32(sdl.INIT_JOYSTICK))
+	defer sdl.Quit()
+
+	// Create a window
 	window, err = sdl.CreateWindow(c.Title, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, int32(c.Width*c.PixelScale), int32(c.Height*c.PixelScale), sdl.WINDOW_SHOWN)
 	if err != nil {
 		return fmt.Errorf("failed to create window: %s", err)
 	}
 	defer window.Destroy()
 
+	// Create a renderer
 	renderer, err = sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		return fmt.Errorf("failed to create renderer: %s", err)
@@ -85,39 +91,34 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 	renderer.SetDrawColor(0, 0, 0, c.Opaque)
 	renderer.Clear()
 
+	// Create a texture to draw to
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ARGB8888, sdl.TEXTUREACCESS_STREAMING, int32(c.Width), int32(c.Height))
 	if err != nil {
 		return fmt.Errorf("failed to create texture: %s", err)
 	}
 
-	var (
-		event                     sdl.Event
-		pause, recording          bool
-		loopCounter, frameCounter uint64
-	)
+	// Initialize joystick
+	if sdl.NumJoysticks() > 0 {
+		joystick = sdl.JoystickOpen(0)
+		defer joystick.Close()
+	}
 
 	// Innerloop
 	for {
-
 		if !pause {
-
 			if drawFunc != nil {
 				if err := drawFunc(c); err != nil {
 					return err
 				}
 			}
-
 			texture.UpdateRGBA(nil, c.Pixels, int(c.Pitch))
-
 			renderer.Copy(texture, nil, nil)
 			renderer.Present()
-
 			if recording {
 				filename := fmt.Sprintf("frame%05d.png", frameCounter)
 				SavePixelsToPNG(c.Pixels, c.Pitch, filename, true)
 				frameCounter++
 			}
-
 		}
 
 		// Check for events
@@ -125,9 +126,97 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 			switch event.(type) {
 			case *sdl.QuitEvent:
 				return errQuit
+			case *sdl.JoyAxisEvent:
+				ae := event.(*sdl.JoyAxisEvent)
+				if ae.Axis == 0 {
+					if ae.Value > 0 {
+						// right
+						if pressFunc != nil {
+							if err := pressFunc(false, true, false, false, false, false, false); err != nil {
+								return err
+							}
+						}
+					} else if ae.Value < 0 {
+						// left
+						if pressFunc != nil {
+							if err := pressFunc(true, false, false, false, false, false, false); err != nil {
+								return err
+							}
+						}
+					}
+				}
+				if ae.Axis == 1 {
+					if ae.Value > 0 {
+						// down
+						if pressFunc != nil {
+							if err := pressFunc(false, false, false, true, false, false, false); err != nil {
+								return err
+							}
+						}
+					} else if ae.Value < 0 {
+						// up
+						if pressFunc != nil {
+							if err := pressFunc(false, false, true, false, false, false, false); err != nil {
+								return err
+							}
+						}
+					}
+				}
+			case *sdl.JoyButtonEvent:
+				be := event.(*sdl.JoyButtonEvent)
+				if be.Button == 0 {
+					if be.State == 1 { // pressed A
+						// fire pressed
+						if pressFunc != nil {
+							if err := pressFunc(false, false, false, false, true, false, false); err != nil {
+								return err
+							}
+						}
+					} else if be.State == 0 { // released A
+						// fire released
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, false, false, true, false, false); err != nil {
+								return err
+							}
+						}
+					}
+				}
+				if be.Button == 1 {
+					if be.State == 1 { // pressed B
+						// secondary pressed
+						if pressFunc != nil {
+							if err := pressFunc(false, false, false, false, false, true, false); err != nil {
+								return err
+							}
+						}
+					} else if be.State == 0 { // released B
+						// secondary released
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, false, false, false, true, false); err != nil {
+								return err
+							}
+						}
+					}
+				}
+				if be.Button == 2 {
+					if be.State == 1 { // pressed C
+						// tertiary pressed
+						if pressFunc != nil {
+							if err := pressFunc(false, false, false, false, false, false, true); err != nil {
+								return err
+							}
+						}
+					} else if be.State == 0 { // released C
+						// tertiary released
+						if releaseFunc != nil {
+							if err := releaseFunc(false, false, false, false, false, false, true); err != nil {
+								return err
+							}
+						}
+					}
+				}
 			case *sdl.KeyboardEvent:
 				ke := event.(*sdl.KeyboardEvent)
-
 				if ke.Type == sdl.KEYDOWN {
 					ks := ke.Keysym
 					switch ks.Sym {
@@ -152,7 +241,6 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 								return err
 							}
 						}
-
 					case sdl.K_RIGHT, sdl.K_d:
 						// right
 						if pressFunc != nil {
@@ -184,7 +272,6 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 									return err
 								}
 							}
-
 							break
 						}
 						// alt+enter is pressed
@@ -271,13 +358,11 @@ func (c *Canvas) Run(drawFunc DrawFunction, pressFunc ActionFunction, releaseFun
 				}
 			}
 		}
-
 		if tickFunc != nil {
 			if err := tickFunc(); err != nil {
 				return err
 			}
 		}
-
 		sdl.Delay(uint32(1000 / c.FrameRate))
 		loopCounter++
 	}
